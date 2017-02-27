@@ -1,0 +1,70 @@
+library(shiny)
+library(datasets)
+library(rgdal)
+library(leaflet)
+library(maptools)
+library(png)
+library(jpeg)
+library(ncdf)   
+library(rasterVis)
+library(sp)
+
+# Define server logic required to summarize and view the selected
+# dataset
+
+shinyServer(function(input, output) {
+  output$plot <- renderPlot({ 
+    setwd("/dmine/data/USDA/agmesh-scenarios/scenario_52177/raster_commodity/")
+    r <- raster(paste(input$year, ".", input$month, ".", input$commodity, "_raster.grd", sep=""))  
+    setwd("/home/git/y-server/commodityEDA/")
+    counties <- readShapePoly('/srv/shiny-server/commodityEDA/UScounties.shp',
+                            proj4string=CRS
+                            ("+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"))
+    WA = counties[grep("Washington",counties@data$STATE_NAME),]
+    rgb.palette <- colorRampPalette(c("blue", "green"))
+    levelplot(r, att = 'LOSS', col.regions=rgb.palette(120)) + layer(sp.polygons(counties, alpha=0.2), data=counties)
+    #levelplot(r, att = 'LOSS', col.regions=rgb.palette(120))
+    #levelplot(r, att = 'LOSS', col.regions=rgb.palette(120)) + layer(sp.polygons(WA, alpha=0.2), data=list(WA=WA))
+})
+  output$plot2 <- renderPlot({
+    setwd("/dmine/data/USDA/agmesh-scenarios/scenario_52177/commodity_csv/")
+    commodity <- read.csv(paste(input$commodity, ".csv", sep=""))
+    commodity_result <- subset(commodity, year == input$year & monthcode == input$month) 
+    library(lattice)
+    bwplot(damagecause ~ log(loss), data=commodity_result, scales=list(x=list(rot=90)))   
+  })
+
+  output$plot3 <- renderPlot({
+    setwd("/dmine/data/USDA/agmesh-scenarios/scenario_52177/commodity_csv/")
+    commodity <- read.csv(paste(input$commodity, ".csv", sep=""))
+    commodity_year <- subset(commodity, year == input$year)
+    library(lattice)
+    bwplot(damagecause ~ log(loss), data=commodity_year, groups=year, scales=list(x=list(rot=90)))  
+  })
+
+  output$plot4 <- renderPlot({
+    setwd("/dmine/data/USDA/agmesh-scenarios/scenario_52177/raster_commodity/")
+    r <- raster(paste(input$year, ".", input$month, ".", input$commodity, "_raster.grd", sep="")) 
+
+
+    setwd("/dmine/data/counties/") 
+    #setwd("/srv/shiny-server/commodityEDA/data/counties/")
+    counties <- readShapePoly('./UScounties.shp',
+                            proj4string=CRS
+                            ("+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"))
+    #projection = CRS("+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0")
+    WA_county <- counties[grep(input$county, counties@data$NAME),]
+    rcounty <- crop(r, WA_county) 
+    # WA_county <- counties[grep(input$county, counties@data$NAME),]
+    # WA_county <- counties[grep("Washington", counties@data$STATE_NAME),("Yakima", counties@data$COUNTY),]
+    rgb.palette <- colorRampPalette(c("blue", "green"))
+    levelplot(rcounty, att = 'LOSS', col.regions=rgb.palette(120)) + layer(sp.polygons(WA_county, alpha=0.2), data=list(WA_county=WA_county))
+  })
+  
+
+
+
+
+
+
+})

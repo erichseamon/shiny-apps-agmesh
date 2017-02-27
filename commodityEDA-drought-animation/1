@@ -1,0 +1,94 @@
+# Define UI for dataset viewer application
+library(shinythemes)
+
+tabPanelAbout <- source("/srv/shiny-server/commodityEDA-drought-animation/about.R")$value
+tabPanelMethods <- source("/srv/shiny-server/commodityEDA-drought-animation/methods.R")$value        
+shinyUI(fluidPage(
+     
+  # Application title
+  #titlePanel("Commodity Loss Animatoion Dashboard"),
+  
+  #tags$div(class="header", checked=NA,
+  #             tags$a(href="https://dmine.io", "Back to DMINE.io Dashboards") 
+  #    ), 
+  # Sidebar with controls to provide a caption, select a dataset,
+  # and specify the number of observations to view. Note that
+  # changes made to the caption in the textInput control are
+  # updated in the output area immediately as you type
+  sidebarLayout(
+    sidebarPanel(
+     div(img(src='dmine-commodity.png', width = 150), style="text-align: center;"),
+     #img(src='dmine-commodity.png', width = 100, align = "center"),
+     h4("DROUGHT Ag Commodity Loss Animation Dashboard"),
+
+#tags$div(class="header", checked=NA,
+#               tags$a(href="https://dmine.io/climate-dashboards/", "Back to DMINE.io", align = "center"),
+#                tags$p(),
+#                tags$a(href="http://dmine.io:3838/commodityEDA-Idaho-2-normal", "Commodity Loss GENERAL Dashboard", align = "center"),
+#                tags$p(),
+#                tags$a(href="http://dmine.io:3838/commodityEDA-drought", "Commodity Loss DROUGHT Dashboard", align = "center")
+
+#         ),
+
+
+     p("Instructions:This dashboard provides animation of crop loss claims for DROUGHT.  Please select your STATE and and COMMODITY."),  
+
+     p("After selecting a state and commodity, you can look at the results information in the horizontal tabs at the top."),
+selectInput("state", label = "State", choice = c("Washington", "Idaho", "Oregon", "PNW"), selected = "Idaho"),
+
+#selectInput("month", "month of interest.  Use a number (1-12)", choices = c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12")),
+#     selectInput("commodity", "Choose a commodity:", 
+#                  choices = c("Apples", "Wheat", "Barley", "Sugar Beets", "Cherries", "Grapes", "Adjusted Gross Revenue", "Green Peas", "All Other Crops", "Pears", "Canola", "Sweet Corn", "Mint", "Potatoes", "Dry Peas", "Processing Beans", "Dry Beans", "Onions", "Cranberries", "Corn", "Oats", "Alfalfa Seed", "Fresh Apricots", "Fresh Freestone Peaches", "Nursery (GF&C)", "Fresh Nectarines", "Mustard", "Blueberries", "Adjusted Gross Revenue-Lite", "Plums", "Soybeans", "Whole Farm Revenue Protection", "Buckwheat")),
+     
+     uiOutput("commoditycontrols"),
+     uiOutput("countycontrols"),
+     uiOutput("damagecontrols") 
+     #selectInput("climate", label = "Climate Variables (choose one)", choice = c("pr", "tmmx"), selected = "pr")
+    width=3),
+    
+ 
+    # Show the caption, a summary of the dataset and an HTML 
+	 # table with the requested number of observations
+	 mainPanel(
+         #tags$style(type="text/css",
+         # ".shiny-output-error { visibility: hidden; }",
+         # ".shiny-output-error:before { visibility: hidden; }"),
+    
+
+tabPanelAbout(),
+
+		tabsetPanel(
+ 			#tabPanel("Month",
+                        #        fluidRow(
+			#		plotOutput("plot7a", height = 300),
+                        #                plotOutput("plot", height = 1000))),
+			#tabPanel("Annual Damage",
+			#	fluidRow(
+			#		plotOutput("plot4", height = 1000),
+			#		dataTableOutput("plot2aa"))),
+
+
+                        #tabPanel("Annual County Drought vs. Climate",
+                        #        fluidRow(
+                        #                plotOutput("plot7c", height = 1000))),
+
+			#tabPanel("Annual County Damage Report",
+        		#	fluidRow(
+                        #                plotOutput("plot7", height = 300),
+			#		dataTableOutput("plot8"),
+			#	        plotOutput("plot5", height = 800))),
+
+
+
+ 			tabPanel("Drought claim animation",
+                                fluidRow(
+      					uiOutput("video"))),
+
+#			tabPanelAbout(),
+ 			tabPanelMethods())
+
+
+ 
+  )
+))
+)
