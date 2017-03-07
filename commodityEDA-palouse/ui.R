@@ -6,6 +6,10 @@ tabPanelMethods <- source("/srv/shiny-server/commodityEDA-palouse/methods.R")$va
 
 
 shinyUI(fluidPage(
+tags$head(
+    tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
+  ),
+
      
   # Application title
   #titlePanel("Commodity Loss DROUGHT Dashboard
@@ -28,7 +32,7 @@ shinyUI(fluidPage(
 #tags$a(div(img(src='di5.png', width =35), style="float: left;"), href="https://dmine.io"),
 #tags$a(div(img(src='di6.png', width =35), style="float: left;"), href="https://dmine.io"),
 
-     tags$a(div(img(src='dmine-commodity-Dash-palouse.png', width =150), style="text-align: center;"), href="https://dmine.io"),
+     #tags$a(div(img(src='dmine-commodity-Dash-palouse.png', width =150), style="text-align: center;"), href="https://dmine.io"),
      #img(src='dmine-commodity.png', width = 100, align = "center"),
      #h6("Ag Dashboard: Palouse ", align = "center"),
 
@@ -45,6 +49,13 @@ shinyUI(fluidPage(
     #           tags$a(href="https://dmine.io/climate-dashboards/", "Back to DMINE.io Dashboards")
     #     ),
 
+ tags$div(class="h4", checked=NA,
+           tags$b(href="https://dmine.io/climate-dashboards/", "DMINE Agriculture Dashboard")
+     ),
+
+ tags$div(class="h5", checked=NA, style="color:darkblue",
+           tags$b(href="https://dmine.io/climate-dashboards/", "Insurance Crop Claim Loss vs. Climate")
+),
 
 
      #p("Instructions: Pick a commodity of interest.  The dashboard will dynamically fill in all the other fields for you on startup.  At any time, you can change the fields to your area or time of interest."),
@@ -77,9 +88,9 @@ radioButtons("var", label = "Statistical Summary Method:", choices = c("mean", "
 
 
 
-     checkboxGroupInput("climate", label = "Climate variables:", choices = c("Precipitation" = "pr", "Max Temp" = "tmmx", "Min Temp" = "tmmn", "BI" = "bi", "TH" = "th", "PDSI" = "pdsi", "PET" = "pet", "SRAD" = "srad", "SPH" = "sph", "VS" = "vs", "100 Hr Burn Index" = "fm100", "1000 Hr Burn Index" = "fm1000"), inline= TRUE, selected="pr")
+     checkboxGroupInput("climate", label = "Climate variables:", choices = c("Precipitation" = "pr", "Max Temp" = "tmmx", "Min Temp" = "tmmn", "BI" = "bi", "TH" = "th", "PDSI" = "pdsi", "PET" = "pet", "SRAD" = "srad", "SPH" = "sph", "VS" = "vs", "100 Hr Burn Index" = "fm100", "1000 Hr Burn Index" = "fm1000"), inline= TRUE, selected="pr"),
      #actionButton("myLoader", "Go!")    
-     #downloadButton("report", "Generate report") 
+     downloadButton("report", "Generate report") 
     , width = 3),    
      # Show the caption, a summary of the dataset and an HTML 
 	 # table with the requested number of observations
@@ -101,7 +112,7 @@ radioButtons("var", label = "Statistical Summary Method:", choices = c("mean", "
           tabPanel("Loss vs. climate",
                                 fluidRow(
                                         plotOutput("plot", height = 1000),
-					                              dataTableOutput("plot8f"))))
+					                              dataTableOutput("plot8f")), icon = icon("bar-chart-o")),
 	#		    tabPanel("Pairwise Analysis",
         #			                  fluidRow(plotOutput("plotmatrix"))))
 	#				                              #dataTableOutput("plot8"))))
@@ -111,7 +122,7 @@ radioButtons("var", label = "Statistical Summary Method:", choices = c("mean", "
 #			    tabPanel("Annual State Counts",
 #			             fluidRow(plotOutput("plot7y"),
 #			                      dataTableOutput("plot8y"))))
-			    
+tabPanelMethods())			    
 			    
 
 ) #main panel

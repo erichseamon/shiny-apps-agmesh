@@ -6,7 +6,10 @@ tabPanelMethods <- source("/srv/shiny-server/commodityEDA-damage-counts/methods.
 
 
 shinyUI(fluidPage(
-     
+   tags$head(
+    tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
+  ),
+  
   # Application title
   #titlePanel("Commodity Loss DROUGHT Dashboard
   
@@ -20,7 +23,7 @@ shinyUI(fluidPage(
   sidebarLayout(
     sidebarPanel(
 
-     tags$a(div(img(src='dmine-commodity-Dash-stateloss.png', width =150), style="text-align: center;"), href="https://dmine.io"),
+     #tags$a(div(img(src='dmine-commodity-Dash-stateloss.png', width =150), style="text-align: center;"), href="https://dmine.io"),
      #img(src='dmine-commodity.png', width = 100, align = "center"),
      #h4("Ag Commodity Loss DAMAGE Dashboard", align = "center"),
 
@@ -36,6 +39,14 @@ shinyUI(fluidPage(
     # tags$div(class="header", checked=NA,
     #           tags$a(href="https://dmine.io/climate-dashboards/", "Back to DMINE.io Dashboards")
     #     ),
+
+ tags$div(class="h4", checked=NA,
+           tags$b(href="https://dmine.io/climate-dashboards/", "DMINE Agriculture Dashboard")
+     ),
+
+ tags$div(class="h5", checked=NA, style="color:darkblue",
+           tags$b(href="https://dmine.io/climate-dashboards/", "Insurance Crop Claim State Frequency")
+),
 
 
 
@@ -53,19 +64,19 @@ shinyUI(fluidPage(
 #                  choices = c("Apples", "Wheat", "Barley", "Sugar Beets", "Cherries", "Grapes", "Adjusted Gross Revenue", "Green Peas", "All Other Crops", "Pears", "Canola", "Sweet Corn", "Mint", "Potatoes", "Dry Peas", "Processing Beans", "Dry Beans", "Onions", "Cranberries", "Corn", "Oats", "Alfalfa Seed", "Fresh Apricots", "Fresh Freestone Peaches", "Nursery (GF&C)", "Fresh Nectarines", "Mustard", "Blueberries", "Adjusted Gross Revenue-Lite", "Plums", "Soybeans", "Whole Farm Revenue Protection", "Buckwheat")),
      
      #uiOutput("countycontrols"),
-     uiOutput("damagecontrols") 
+     uiOutput("damagecontrols"), 
      #selectInput("climate", label = "Climate Variables (choose one)", choice = c("pr", "tmmx"), selected = "pr")
 
      #actionButton("myLoader", "Go!")    
-     #downloadButton("report", "Generate report") 
+     downloadButton("report", "Generate report") 
     , width=3),    
      # Show the caption, a summary of the dataset and an HTML 
 	 # table with the requested number of observations
 
 	 mainPanel(
-         #tags$style(type="text/css",
-          #".shiny-output-error { visibility: hidden; }",
-          #".shiny-output-error:before { visibility: hidden; }"),
+         tags$style(type="text/css",
+          ".shiny-output-error { visibility: hidden; }",
+          ".shiny-output-error:before { visibility: hidden; }"),
     
 
 tabPanelAbout(),
@@ -85,11 +96,11 @@ tabPanelAbout(),
 	#				                              dataTableOutput("plot8"))),
 			    tabPanel("Annual State Loss",
 			             fluidRow(plotOutput("plot5x"),
-			                      dataTableOutput("plot8x"))),
+			                      dataTableOutput("plot8x")),icon = icon("bar-chart-o")),
 			    tabPanel("Annual State Counts",
 			             fluidRow(plotOutput("plot7y"),
-			                      dataTableOutput("plot8y"))))
-			    
+			                      dataTableOutput("plot8y")),icon = icon("bar-chart-o")),
+tabPanelMethods())			    
 			    
 
 ) #main panel

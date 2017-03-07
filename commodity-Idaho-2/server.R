@@ -15,6 +15,29 @@ library(data.table)
 # dataset
 
 shinyServer(function(input, output) {
+
+output$report <- downloadHandler(
+      # For PDF output, change this to "report.pdf"
+      filename = "report.html",
+      content = function(file) {
+        # Copy the report file to a temporary directory before processing it, in
+        # case we don't have write permissions to the current working dir (which
+        # can happen when deployed).
+        #tempReport <- file.path(tempdir(), "report.Rmd")
+        #file.copy("report.Rmd", tempReport, overwrite = TRUE)
+
+        # Set up parameters to pass to Rmd document
+        params <- list(n = input$year)
+
+        # Knit the document, passing in the `params` list, and eval it in a
+        # child of the global environment (this isolates the code in the document
+        # from the code in this app).
+        rmarkdown::render(tempReport, output_file = file,
+          params = params,
+          envir = new.env(parent = globalenv())
+        )
+}
+)
   output$plot <- renderPlot({
 withProgress(message = 'Working', value = 0, {
 
@@ -67,7 +90,7 @@ i <- paste(input$year, ".", input$month, ".", input$commodity, ".csv", sep="")
   #--begin polygon work
   #length(na.omit(m$LOSS))
   #tt <- colorRampPalette(brewer.pal(11, "Spectral")
-  tt <- colorRampPalette(c("blue", "orange", "red"), space = "Lab")
+  tt <- colorRampPalette(c("light blue",  "dark blue"), space = "Lab")
   mz <- subset(m, LOSS != 0)
   mzacres <- subset(m, ACRES > 0)
   lengacres <- length(m$ACRES)
@@ -145,7 +168,7 @@ i <- paste(input$year, ".", input$month, ".", input$commodity, ".csv", sep="")
   midpoint_loss <- (max(mz$LOSS) + min(mz$LOSS)/2)
   midpoint_acres <- (max(mzacres$ACRES) + min(mzacres$ACRES)/2)
   
-  b <- barplot(mz$LOSS, names.arg = mz$NAME, las=2, cex.names = 1, cex.axis = 1,  col = newmatrix2, main = paste(input$state, " crop loss bar chart ($)  \n", plotmonth, " ", plotyear, "\n", plotcommodity, sep=""), cex.main = 1, horiz=TRUE)
+  b <- barplot(mz$LOSS, names.arg = mz$NAME, las=2, cex.names = 1, cex.axis = 1,  col = newmatrix2, main = paste(input$state, " crop loss bar chart ($)  \n", plotmonth, " ", plotyear, "\n", input$commodity, sep=""), cex.main = 1, horiz=TRUE)
   #text(bb, midpoint_loss, labels=mz$LOSS, srt=90)
   plot(m, col = newmatrix, main = paste(input$state, " crop loss map ($)  \n", plotmonth, " ", plotyear, "\n", plotcommodity, sep=""), cex.main = 1, cex.axis = 1.5, cex.names = 1.5)
   
@@ -333,7 +356,7 @@ i <- paste(input$year, "_monthly_usda_gridmet_post2001_", input$state, sep="")
   #--begin polygon work
   #length(na.omit(m$LOSS))
   #tt <- colorRampPalette(brewer.pal(11, "Spectral")
-  tt <- colorRampPalette(c("blue", "light blue", "orange", "red"), space = "Lab")
+  tt <- colorRampPalette(c("light blue", "dark blue"), space = "Lab")
   #mz <- subset(m, LOSS != 0)
   #mzacres <- subset(m, acres > 0)
   lengacres <- length(m$acres)
@@ -404,21 +427,20 @@ i <- paste(input$year, "_monthly_usda_gridmet_post2001_", input$state, sep="")
   #m <- cbind(m$LOSS, newmatrix)
   #midpoints <- barplot(mz$LOSS)
   #png(paste("/dmine/data/USDA/agmesh-scenarios/", input$state, "/month_png/", x$YEAR[1], ".", x$MONTHCODE[1], ".", x$COMMODITY[1],  "_plot", sep=""))
-  par(mar=c(6,3,3,2)+1)
+  par(mar=c(6,6,3,2)+1)
   par(mfrow=c(2,2))
-  layout(matrix(c(1,2),1, 2, byrow=TRUE))
+  layout(matrix(c(1,1,2),1, 3, byrow=TRUE))
   #--turn image horizontal
-
   plotmonth <- month.abb[x$monthcode[1]]
   plotyear <- x$year[1]
   plotcommodity <- x$commodity[1]
 
   midpoint_loss <- (max(m$loss) + min(m$loss)/2)
   midpoint_acres <- (max(m$acres) + min(m$acres)/2)
-
-  b <- barplot(m$loss, names.arg = m$county, las=2, col = newmatrix, horiz=TRUE, main = paste(input$state, " crop loss bar chart ($) \n", " ", plotyear, "\n", plotcommodity, sep=""), cex.main=1)
+  par(mar=c(6,6,8,2))
+  b <- barplot(m$loss, names.arg = m$county, las=2, col = newmatrix, cex.names=1, horiz=TRUE, main = paste(input$state, " crop loss bar chart ($) \n", " ", plotyear, "\n", input$commodity, sep=""), cex.axis=1.3, cex.main=1.5, width=4)
   #text(bb, midpoint_loss, labels=mz$loss, srt=90)
-  plot(m, col = newmatrix, main = paste(input$state, " crop loss map ($) \n", " ", plotyear, "\n", plotcommodity, sep=""), cex.main=1)
+  plot(m, col = newmatrix, main = paste(input$state, " crop loss map ($) \n", " ", plotyear, "\n", input$commodity, sep=""), cex.main=1.5)
 
   #bb <- barplot(m$acres, names.arg = m$county, las=2, col = newmatrix_acres, horiz=TRUE)
   #text(b, midpoint_acres, labels=mzacres$acres, xpd=NA, col = "White")
@@ -1030,9 +1052,12 @@ output$plot7 <- renderPlot({
          commodity <- read.csv(paste(input$year, "_monthly_usda_gridmet_post2001_", input$state, sep=""), strip.white = TRUE)
 
          commodity_year <- subset(commodity, year == input$year & monthcode == input$month)
-         #par(mfrow = c(1, 2))
-         #plot(counties)
-         #tr <- plot(counties, main = paste("Crop Commodity Statewide Monthly Loss Report", "State: ", input$state, "   Month ", input$month, "  Year: ", input$year, "   Commodity: ", input$commodity, sep=""))
+  
+  par(mfrow=c(2,1))
+  layout(matrix(c(1,2),2, 1, byrow=TRUE))
+
+#plot(counties)
+         tr <- plot(counties, main = paste("Crop Commodity Statewide Monthly Loss Report", "State: ", input$state, "   Month ", input$month, "  Year: ", input$year, "   Commodity: ", input$commodity, sep=""))
          library(lattice) 
          bwplot(damagecause ~ log(loss), data=commodity_year, scales=list(x=list(rot=90, cex = 1.5)), main = paste(input$state, " damages cause for ", plotmonth, ", ",  input$year, "\n", "Commodity: ",  input$commodity, sep=""), cex.lab = 1.5, cex.axis = 1.5, cex.main = 1, par.settings=list(par.main.text=list(cex=1)) )
 

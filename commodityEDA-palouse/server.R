@@ -13,6 +13,30 @@ library(maptools)
 
 shinyServer(function(input, output) {
 
+output$report <- downloadHandler(
+      # For PDF output, change this to "report.pdf"
+      filename = "report.html",
+      content = function(file) {
+        # Copy the report file to a temporary directory before processing it, in
+        # case we don't have write permissions to the current working dir (which
+        # can happen when deployed).
+        #tempReport <- file.path(tempdir(), "report.Rmd")
+        #file.copy("report.Rmd", tempReport, overwrite = TRUE)
+
+        # Set up parameters to pass to Rmd document
+        params <- list(n = input$year)
+
+        # Knit the document, passing in the `params` list, and eval it in a
+        # child of the global environment (this isolates the code in the document
+        # from the code in this app).
+        rmarkdown::render(tempReport, output_file = file,
+          params = params,
+          envir = new.env(parent = globalenv())
+        )
+}
+)
+
+
 #loadHandler <- reactive({
 #  input$myLoader #create a dependency on the button, per Shiny examples.
 
@@ -214,9 +238,25 @@ totalc <- merge(palouse6, totalb, type = "date", all=T)
 totalc[is.na(totalc)] <- 0
 totalc <- subset(totalc, year >= input$firstyear & year <= input$lastyear)
 
+
+replace_multiple <- function(x, m){
+    len_x <- length(x)
+    index_to_replace <- seq(1, len_x, by = m)
+     
+    #differ <- setdiff(x, index_to_replace)
+    #index_to_replace2 <- x[!index_to_replace]
+    x[index_to_replace] <- ' '
+    return(x)
+}
+
+totald <- replace_multiple(totalc$date, 2)
+
+par(mar=c(6,6,4,2)+1)
+
+
 c = totalc[seq(1, length(totalc),12)]
 #bplott <- barplot(totalc$loss)
-barplot(totalc$loss, names.arg=totalc$date, las=2, cex.names=1)
+barplot(totalc$loss, names.arg=totald, col="blue", las=2, cex.names=1, cex.main=1.5, cex.axis=1, main = paste(input$damage, " Damage cause ", input$firstyear, " to ",  input$lastyear, "\n", "Commodity: ",  input$commodity, sep=""))
 #axis(1, at=bplott, labels = c$date, las = 2)
 
 
@@ -227,13 +267,14 @@ barplot(totalc$loss, names.arg=totalc$date, las=2, cex.names=1)
 #-by county
 palouse_loss_county <- palouse4[,list(loss=sum(loss)), by = county]
 
-tt <- colorRampPalette(c("light blue", "red"))
+tt <- colorRampPalette(c("light blue", "dark blue"))
 
 orderedcolors2 <- tt(length(palouse_loss_county$loss))[order(palouse_loss_county$loss)]
 palouse_loss_county <- cbind(palouse_loss_county, orderedcolors2)
 names(allcounties)[1] <- "county"
 palouse_counties <- merge(allcounties, palouse_loss_county, by = 'county')
-plot(palouse_counties, col = palouse_loss_county$orderedcolors2)
+
+plot(palouse_counties, col = palouse_loss_county$orderedcolors2, cex.names=1, cex.main=1.5, cex.axis=1, main = paste(input$damage, " Palouse region damage cause ", input$firstyear, " to ",  input$lastyear, "\n", "Commodity: ",  input$commodity, sep=""))
 
 
 climvar <- input$climate
@@ -245,13 +286,12 @@ plot(eval(parse(text=paste("combined3", input$var, ".df$", i, sep=""))), ylab=i,
 lines(eval(parse(text=paste("combined3", input$var, ".df$", i, sep=""))), ylab=i, xlab=paste(input$firstyear, " to ", input$lastyear, sep=""), na.rm=TRUE)
   library(RGraphics)
   library(gridExtra)
-
-    text = paste("\n   The following is text that'll appear in a plot window.\n",
-           "       As you can see, it's in the plot window",
-           "       One might imagine useful informaiton here")
+  meanplot <- mean(eval(parse(text=paste("combined3", input$var, ".df$", i , sep=""))))
+  meanplot <- mean(eval(parse(text=paste("combined3", input$var, ".df$", i , sep=""))))
+    text = paste( i, "mean for time period is: ", meanplot)
 
 library("PerformanceAnalytics")
-textplot(text)
+textplot(text, cex=1.5,  halign="left", valign="center")
 
 }
 

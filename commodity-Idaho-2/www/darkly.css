@@ -5129,7 +5129,7 @@ a.thumbnail.active {
 }
 .progress {
   overflow: hidden;
-  height: 21px;
+  height: 29999999999px;
   margin-bottom: 21px;
   background-color: #ebebeb;
   border-radius: 4px;
@@ -7043,4 +7043,13 @@ a.list-group-item-danger.active:focus {
 }
 .panel-default > .panel-heading {
   background-color: #464545;
+}
+
+
+
+.shiny-progress {
+  top: 50% !important;
+  left: 50% !important;
+  margin-top: -100px !important;
+  margin-left: -250px !important;
 }

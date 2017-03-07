@@ -6,6 +6,10 @@ tabPanelMethods <- source("/srv/shiny-server/commodityEDA-Idaho-2/methods.R")$va
 
 
 shinyUI(fluidPage(
+tags$head(
+    tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
+  ),
+
      
   # Application title
   #titlePanel("Commodity Loss DROUGHT Dashboard
@@ -20,9 +24,9 @@ shinyUI(fluidPage(
   sidebarLayout(
     sidebarPanel(
 
-     tags$a(div(img(src='dmine-commodity.png', width =150), style="text-align: center;"), href="https://dmine.io"),
+     #tags$a(div(img(src='dmine-commodity.png', width =150), style="text-align: center;"), href="https://dmine.io"),
      #img(src='dmine-commodity.png', width = 100, align = "center"),
-     h4("Ag Commodity Loss PALOUSE Dashboard", align = "center"),
+     #h4("Ag Commodity Loss PALOUSE Dashboard", align = "center"),
 
 #     tags$div(class="header", checked=NA,
 #                tags$a(href="https://dmine.io/climate-dashboards/", "Back to DMINE.io", align = "center"),
@@ -36,6 +40,14 @@ shinyUI(fluidPage(
     # tags$div(class="header", checked=NA,
     #           tags$a(href="https://dmine.io/climate-dashboards/", "Back to DMINE.io Dashboards")
     #     ),
+
+ tags$div(class="h4", checked=NA,
+           tags$b(href="https://dmine.io/climate-dashboards/", "DMINE Agriculture Dashboard")
+     ),
+
+ tags$div(class="h5", checked=NA, style="color:darkblue",
+           tags$b(href="https://dmine.io/climate-dashboards/", "Insurance Crop Claim Prediction Models")
+),
 
 
 
@@ -70,11 +82,11 @@ shinyUI(fluidPage(
 
 
      checkboxGroupInput("climate", label = "Climate variables:", choices = c("Precipitation" = "pr", "Max Temp" = "tmmx", "Min Temp" = "tmmn", "Relative Min Humidity" = "rmin", "Relative Max Humidity" = "rmax", "Palmer Drought Index" = "pdsi", "100 Hr Burn Index" = "fm100", "1000 Hr Burn Index" = "fm1000", "Potential ET" = "pet"), inline= TRUE, selected=c("pr", "pdsi")),
-     selectInput("predictor", label = "Predictor Variable:", choice = c("Crop Loss ($)" = "loss", "Crop Claim Frequency" = "countratio"), selected = "loss")
+     selectInput("predictor", label = "Predictor Variable:", choice = c("Crop Loss ($)" = "loss", "Crop Claim Frequency" = "countratio"), selected = "loss"),
 
 
      #actionButton("myLoader", "Go!")    
-     #downloadButton("report", "Generate report") 
+     downloadButton("report", "Generate report") 
     , width=3),    
      # Show the caption, a summary of the dataset and an HTML 
 	 # table with the requested number of observations
@@ -99,26 +111,28 @@ shinyUI(fluidPage(
 	tabPanel("Pairwise",
                                 fluidRow(
                                         plotOutput("plotregression", height = 400),
-                                                                      dataTableOutput("plot8f"))),
+                                                                      dataTableOutput("plotpairtable")), icon = icon("bar-chart-o")),
 
+ tabPanel("Regression",
+                                                  fluidRow(plotOutput("plot5aa"),
+                                                                      verbatimTextOutput("plot5ab")), icon = icon("bar-chart-o")),
 
            
 			    tabPanel("Decision Tree",
                                 fluidRow(
                                         plotOutput("plot7dd", height = 400),
-                                       dataTableOutput("plot8g"))),
+                                       dataTableOutput("plot8g")), icon = icon("bar-chart-o")),
 
-			    tabPanel("Regression",
-        			                  fluidRow(plotOutput("plot5aa"),
-					                              verbatimTextOutput("plot5ab"))),
 			    tabPanel("Treemap",
 			             fluidRow(plotOutput("plot5xx"),
-			                      dataTableOutput("plot8x"))),
+			                      dataTableOutput("plot8x")), icon = icon("bar-chart-o")),
 			    tabPanel("Neuralnet",
 			             fluidRow(plotOutput("plot5nn"),
-			                      plotOutput("plot5nn2"))))
+			                      plotOutput("plot5nn2"),
+					      plotOutput("plot5nn3")), icon = icon("bar-chart-o")),
 			    
-			    
+ 			    tabPanel("Ensemble",
+                                     fluidRow(plotOutput("plot5ensemble", height = 400)), icon = icon("bar-chart-o")))
 
 ) #main panel
 ))

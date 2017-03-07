@@ -13,6 +13,29 @@ library(raster)
 
 shinyServer(function(input, output) {
 
+output$report <- downloadHandler(
+      # For PDF output, change this to "report.pdf"
+      filename = "report.html",
+      content = function(file) {
+        # Copy the report file to a temporary directory before processing it, in
+        # case we don't have write permissions to the current working dir (which
+        # can happen when deployed).
+        #tempReport <- file.path(tempdir(), "report.Rmd")
+        #file.copy("report.Rmd", tempReport, overwrite = TRUE)
+
+        # Set up parameters to pass to Rmd document
+        params <- list(n = input$year)
+
+        # Knit the document, passing in the `params` list, and eval it in a
+        # child of the global environment (this isolates the code in the document
+        # from the code in this app).
+        rmarkdown::render(tempReport, output_file = file,
+          params = params,
+          envir = new.env(parent = globalenv())
+        )
+}
+)
+
 #loadHandler <- reactive({
 #  input$myLoader #create a dependency on the button, per Shiny examples.
 
@@ -1152,6 +1175,7 @@ output$plot5x <- renderPlot({
     #DT3 <- data.frame(DT2$acres, DT2$loss)
     #DT4 <- cbind(x, DT3)
     DT2loss <- DT2[,list(loss=sum(loss)), by = county]
+    DT2$acres <- as.numeric(DT2$acres)
     #DT2 <- DT2[, lapply(.SD, sum), by=list(county)]
     DT2acres <- DT2[,list(acres=sum(acres)), by = county]
     DTdamage_loss <- DT2[,list(loss=sum(loss)), by = damagecause]

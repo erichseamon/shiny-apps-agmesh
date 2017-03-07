@@ -1,13 +1,12 @@
 function(){
-	tabPanel("About",
+	tabPanel("Help",
 		 HTML('
-<br></br>
-    <p><strong>DMINE Agriculture Dashboard   |   Insurance Crop Claim Loss</strong><br/>
-<a href="https://dmine.io/ag-commodity-loss-dashboard/", style="text-decoration:underline;", target="_parent">County Loss</a> |
-                <a href="https://dmine.io/ag-commodity-loss-dashboard-drought/" target="_parent">County Frequency</a> |
-                <a href="https://dmine.io/ag-commodity-dashboard-damage-counts/" target="_parent">State Frequency</a> |
+<h3><p><strong>DMINE Agriculture Dashboard: Insurance Crop Claim Loss</strong><br/></h3>
+<a href="https://dmine.io/ag-commodity-loss-dashboard/", style="text-decoration:underline;", target="_parent">Claim Loss</a> |
+                <a href="https://dmine.io/ag-commodity-loss-dashboard-drought/" target="_parent">Claim County Frequency</a> |
+                <a href="https://dmine.io/ag-commodity-dashboard-damage-counts/" target="_parent">Claim State Frequency</a> |
 
-<a href="https://dmine.io/ag-commodity-loss-dashboard-animation/", target="_parent">State Drought Animation</a> |
+<a href="https://dmine.io/ag-commodity-loss-dashboard-animation/", target="_parent">Claim Animation</a> |
 <a href="https://dmine.io/ag-dashboard-palouse-crop-claims-vs-climate/" target="_parent">Loss vs Climate</a> |
 <a href="https://dmine.io/ag-dashboard-regression-and-model-analysis/" target="_parent">Prediction</a> |
 

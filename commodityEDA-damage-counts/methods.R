@@ -1,5 +1,5 @@
 function(){
-	tabPanel("Methods",
+	tabPanel("Help",
 		 HTML('
 <br></br>
                 <div style="clear: left;"><img src="https://s.gravatar.com/avatar/450f85ccf35a87cf1806fe3330af4877?s=80" alt="" style="float: left; margin-right:5px" /></div>

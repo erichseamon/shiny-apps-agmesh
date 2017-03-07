@@ -4,6 +4,10 @@ library(shinythemes)
 tabPanelAbout <- source("/srv/shiny-server/commodityEDA-drought-animation/about.R")$value
 tabPanelMethods <- source("/srv/shiny-server/commodityEDA-drought-animation/methods.R")$value        
 shinyUI(fluidPage(
+tags$head(
+    tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
+  ),
+
      
   # Application title
   #titlePanel("Commodity Loss Animatoion Dashboard"),
@@ -17,9 +21,9 @@ shinyUI(fluidPage(
   # updated in the output area immediately as you type
   sidebarLayout(
     sidebarPanel(
-     div(img(src='dmine-commodity.png', width = 150), style="text-align: center;"),
+     #div(img(src='dmine-commodity.png', width = 150), style="text-align: center;"),
      #img(src='dmine-commodity.png', width = 100, align = "center"),
-     h4("DROUGHT Ag Commodity Loss Animation Dashboard"),
+    # h4("DROUGHT Ag Commodity Loss Animation Dashboard"),
 
 #tags$div(class="header", checked=NA,
 #               tags$a(href="https://dmine.io/climate-dashboards/", "Back to DMINE.io", align = "center"),
@@ -30,6 +34,13 @@ shinyUI(fluidPage(
 
 #         ),
 
+tags$div(class="h4", checked=NA,
+           tags$b(href="https://dmine.io/climate-dashboards/", "DMINE Agriculture Dashboard")
+     ),
+
+ tags$div(class="h5", checked=NA, style="color:darkblue",
+           tags$b(href="https://dmine.io/climate-dashboards/", "Insurance Crop Claim Animation")
+),
 
      p("Instructions:This dashboard provides animation of crop loss claims for DROUGHT.  Please select your STATE and and COMMODITY."),  
 
@@ -42,7 +53,8 @@ selectInput("state", label = "State", choice = c("Washington", "Idaho", "Oregon"
      
      uiOutput("commoditycontrols"),
      uiOutput("countycontrols"),
-     uiOutput("damagecontrols") 
+     uiOutput("damagecontrols"), 
+     downloadButton("report", "Generate report")
      #selectInput("climate", label = "Climate Variables (choose one)", choice = c("pr", "tmmx"), selected = "pr")
    , width=3),
     
@@ -50,9 +62,9 @@ selectInput("state", label = "State", choice = c("Washington", "Idaho", "Oregon"
     # Show the caption, a summary of the dataset and an HTML 
 	 # table with the requested number of observations
 	 mainPanel(
-         #tags$style(type="text/css",
-         # ".shiny-output-error { visibility: hidden; }",
-         # ".shiny-output-error:before { visibility: hidden; }"),
+         tags$style(type="text/css",
+          ".shiny-output-error { visibility: hidden; }",
+          ".shiny-output-error:before { visibility: hidden; }"),
     
 
 tabPanelAbout(),
@@ -82,7 +94,7 @@ tabPanelAbout(),
 
  			tabPanel("Drought claim animation",
                                 fluidRow(
-      					uiOutput("video"))),
+      					uiOutput("video")), icon = icon("bar-chart-o")),
 
 #			tabPanelAbout(),
  			tabPanelMethods())

@@ -13,6 +13,31 @@ library(maptools)
 
 shinyServer(function(input, output) {
 
+output$report <- downloadHandler(
+      # For PDF output, change this to "report.pdf"
+      filename = "report.html",
+      content = function(file) {
+        # Copy the report file to a temporary directory before processing it, in
+        # case we don't have write permissions to the current working dir (which
+        # can happen when deployed).
+        #tempReport <- file.path(tempdir(), "report.Rmd")
+        #file.copy("report.Rmd", tempReport, overwrite = TRUE)
+
+        # Set up parameters to pass to Rmd document
+        params <- list(n = input$year)
+
+        # Knit the document, passing in the `params` list, and eval it in a
+        # child of the global environment (this isolates the code in the document
+        # from the code in this app).
+        rmarkdown::render(tempReport, output_file = file,
+          params = params,
+          envir = new.env(parent = globalenv())
+        )
+}
+)
+
+
+
 #loadHandler <- reactive({
 #  input$myLoader #create a dependency on the button, per Shiny examples.
 
@@ -1317,6 +1342,44 @@ treemap(myfiles_allyears, #Your data frame object
 })
 })
 
+output$plotpairtable <- renderDataTable({
+#  req(input$commodity)
+  withProgress(message = 'Working', value = 0, {
+
+library(DAAG)
+library(stats)
+library(neuralnet)
+
+setwd("/dmine/data/USDA/agmesh-scenarios/palouse/summaries/annual_county_summaries/")
+files <- list.files(pattern = "\\_WHEAT_drought$")
+myfiles = do.call(rbind, lapply(files, function(x)
+  read.csv(x, stringsAsFactors = FALSE)))
+
+#names(myfiles)[19] <- c("year")
+myfiles$prpet <- (myfiles$pr - myfiles$pet)
+#write.csv(myfiles, file = "WHEAT_drought_summary")
+#myfiles_allyears <- subset(myfiles, , c(pr, pdsi, pet, tmmx, prpet, erc, countratio, loss, acres, count, county, year))
+myfiles_allyears <- subset(myfiles, , c(tmmn, rmin, rmax, fm100, fm1000, pr, pdsi, pet, tmmx, prpet, erc, countratio, loss, acres, count, county, year))
+
+myfiles_allyears$county <- factor(myfiles_allyears$county)
+myfiles_allyears$year <- factor(myfiles_allyears$year)
+myfiles_allyears$loss_unscaled <- myfiles_allyears$loss
+myfiles_allyears$loss <- scale(myfiles_allyears$loss, center = TRUE, scale = FALSE)
+myfiles_allyears[1:11] <- scale(myfiles_allyears[1:11], center = TRUE, scale = TRUE)
+
+#data <- myfiles_allyears[1:7]
+#data_orig <- myfiles_allyears[1:6]
+yearpred <- myfiles_allyears[input$predictor]
+data <- cbind(myfiles_allyears[input$climate], yearpred, county=myfiles_allyears$county, year=myfiles_allyears$year)
+
+
+
+
+})
+})
+
+
+
 output$plot5nn <- renderPlot({
 #  req(input$commodity)
   withProgress(message = 'Working', value = 0, {
@@ -1420,6 +1483,176 @@ MSE.nn <- sum((test.r - pr.nn_)^2)/nrow(test_)
 })
 
 
+
+output$plot5nn3 <- renderPlot({
+#  req(input$commodity)
+  withProgress(message = 'Working', value = 0, {
+
+
+library(DAAG)
+library(stats)
+library(neuralnet)
+library(boot)
+library(plyr)
+
+setwd("/dmine/data/USDA/agmesh-scenarios/palouse/summaries/annual_county_summaries/")
+files <- list.files(pattern = "\\_WHEAT_drought$")
+myfiles = do.call(rbind, lapply(files, function(x)
+  read.csv(x, stringsAsFactors = FALSE)))
+
+#names(myfiles)[19] <- c("year")
+myfiles$prpet <- (myfiles$pr - myfiles$pet)
+#write.csv(myfiles, file = "WHEAT_drought_summary")
+#myfiles_allyears <- subset(myfiles, , c(pr, pdsi, pet, tmmx, prpet, erc, countratio, loss, acres, count, county, year))
+myfiles_allyears <- subset(myfiles, , c(tmmn, rmin, rmax, fm100, fm1000, pr, pdsi, pet, tmmx, prpet, erc, countratio, loss, acres, count, county, year))
+
+myfiles_allyears$county <- factor(myfiles_allyears$county)
+myfiles_allyears$year <- factor(myfiles_allyears$year)
+myfiles_allyears$loss_unscaled <- myfiles_allyears$loss
+myfiles_allyears$loss <- scale(myfiles_allyears$loss, center = TRUE, scale = FALSE)
+myfiles_allyears[1:11] <- scale(myfiles_allyears[1:11], center = TRUE, scale = TRUE)
+
+
+
+#data <- myfiles_allyears[1:7]
+#data_orig <- myfiles_allyears[1:6]
+yearpred <- myfiles_allyears[input$predictor]
+data <- cbind(myfiles_allyears[input$climate], yearpred)
+#colnames(data)[12] <- c(input$predictor)
+colnames(data[ncol(data)]) <- c(input$predictor)
+
+
+cv.error <- NULL
+k <- 10
+
+library(plyr) 
+
+maxs <- apply(data, 2, max) 
+mins <- apply(data, 2, min)
+
+scaled <- as.data.frame(scale(data, center = mins, scale = maxs - mins))
+
+
+
+for(i in 1:k){
+  index <- sample(1:nrow(data),round(0.9*nrow(data)))
+  train.cv <- scaled[index,]
+  test.cv <- scaled[-index,]
+ n <- names(train.cv)
+f <- as.formula(paste(input$predictor, " ~", paste(n[!n %in% input$predictor], collapse = " + "))) 
+  nn <- neuralnet(f,data=train.cv,hidden=c(5,2),linear.output=T)
+  
+#  pr.nn <- compute(nn,test.cv[,1:6])
+#  pr.nn <- pr.nn$net.result*(max(data$countratio)-min(data$countratio))+min(data$countratio)
+  
+#  test.cv.r <- (test.cv$countratio)*(max(data$countratio)-min(data$countratio))+min(data$countratio)
+ 
+pr.nn <- compute(nn,test.cv[input$climate])
+
+pr.nn <- pr.nn$net.result*(max(data[input$predictor])-min(data[input$predictor]))+min(data[input$predictor])
+test.cv.r <- (test.cv[input$predictor])*(max(data[input$predictor])-min(data[input$predictor]))+min(data[input$predictor])
+
+
+
+
+ 
+  cv.error[i] <- sum((test.cv.r - pr.nn)^2)/nrow(test.cv)
+  
+}
+
+ avenn <- mean(cv.error)
+
+boxplot(cv.error,xlab=paste("NN mean CV error =", avenn, sep=""), col='cyan',
+         border='blue',names='CV error (MSE)',
+         main='CV error (MSE) for NN',horizontal=TRUE)
+ 
+})
+})
+
+
+
+
+
+
+output$plot5nn4 <- renderPlot({
+#  req(input$commodity)
+  withProgress(message = 'Working', value = 0, {
+
+
+
+
+set.seed(500)
+library(MASS)
+
+
+setwd("/dmine/data/USDA/agmesh-scenarios/palouse/summaries/annual_county_summaries/")
+files <- list.files(pattern = "\\_WHEAT_drought$")
+myfiles = do.call(rbind, lapply(files, function(x)
+  read.csv(x, stringsAsFactors = FALSE)))
+
+#names(myfiles)[19] <- c("year")
+myfiles$prpet <- (myfiles$pr - myfiles$pet)
+#write.csv(myfiles, file = "WHEAT_drought_summary")
+#myfiles_allyears <- subset(myfiles, , c(pr, pdsi, pet, tmmx, prpet, erc, countratio, loss, acres, count, county, year))
+myfiles_allyears <- subset(myfiles, , c(tmmn, rmin, rmax, fm100, fm1000, pr, pdsi, pet, tmmx, prpet, erc, countratio, loss, acres, count, county, year))
+
+myfiles_allyears$county <- factor(myfiles_allyears$county)
+myfiles_allyears$year <- factor(myfiles_allyears$year)
+myfiles_allyears$loss_unscaled <- myfiles_allyears$loss
+myfiles_allyears$loss <- scale(myfiles_allyears$loss, center = TRUE, scale = FALSE)
+myfiles_allyears[1:11] <- scale(myfiles_allyears[1:11], center = TRUE, scale = TRUE)
+
+
+
+#data <- myfiles_allyears[1:7]
+#data_orig <- myfiles_allyears[1:6]
+yearpred <- myfiles_allyears[input$predictor]
+data <- cbind(myfiles_allyears[input$climate], yearpred)
+#colnames(data)[12] <- c(input$predictor)
+colnames(data[ncol(data)]) <- c(input$predictor)
+
+index <- sample(1:nrow(data),round(0.75*nrow(data)))
+train <- data[index,]
+test <- data[-index,]
+lm.fit <- glm(medv~., data=train)
+summary(lm.fit)
+pr.lm <- predict(lm.fit,test)
+MSE.lm <- sum((pr.lm - test$medv)^2)/nrow(test)
+
+maxs <- apply(data, 2, max) 
+mins <- apply(data, 2, min)
+
+scaled <- as.data.frame(scale(data, center = mins, scale = maxs - mins))
+
+train_ <- scaled[index,]
+test_ <- scaled[-index,]
+
+
+library(neuralnet)
+n <- names(train_)
+f <- as.formula(paste("medv ~", paste(n[!n %in% "medv"], collapse = " + ")))
+nn <- neuralnet(f,data=train_,hidden=c(5,3),linear.output=T)
+
+
+
+
+
+
+
+plot(test$medv,pr.nn_,col='red',main='Real vs predicted NN',pch=18,cex=0.7)
+points(test$medv,pr.lm,col='blue',pch=18,cex=0.7)
+abline(0,1,lwd=2)
+legend('bottomright',legend=c('NN','LM'),pch=18,col=c('red','blue'))
+})
+})
+
+
+
+
+
+
+
+
 output$plot5nn2 <- renderPlot({
 #  req(input$commodity)
   withProgress(message = 'Working', value = 0, {
@@ -1517,12 +1750,62 @@ abline(0,1,lwd=2)
 legend('bottomright',legend='LM',pch=18,col='blue', bty='n', cex=.95)
 
 
-
-
 })
 })
 
+output$plot5ensemble <- renderPlot({
+  #req(input$commodity)
+  withProgress(message = 'Working', value = 0, {
 
+library(DAAG)
+library(stats)
+library(neuralnet)
+library(mlbench)
+library(caret)
+library(caretEnsemble)
+
+setwd("/dmine/data/USDA/agmesh-scenarios/palouse/summaries/annual_county_summaries/")
+files <- list.files(pattern = "\\_WHEAT_drought$")
+myfiles = do.call(rbind, lapply(files, function(x)
+  read.csv(x, stringsAsFactors = FALSE)))
+
+#names(myfiles)[19] <- c("year")
+myfiles$prpet <- (myfiles$pr - myfiles$pet)
+#write.csv(myfiles, file = "WHEAT_drought_summary")
+#myfiles_allyears <- subset(myfiles, , c(pr, pdsi, pet, tmmx, prpet, erc, countratio, loss, acres, count, county, year))
+myfiles_allyears <- subset(myfiles, , c(tmmn, rmin, rmax, fm100, fm1000, pr, pdsi, pet, tmmx, prpet, erc, countratio, loss, acres, count, county, year))
+
+myfiles_allyears$county <- factor(myfiles_allyears$county)
+myfiles_allyears$year <- factor(myfiles_allyears$year)
+myfiles_allyears$loss_unscaled <- myfiles_allyears$loss
+myfiles_allyears$loss <- scale(myfiles_allyears$loss, center = TRUE, scale = FALSE)
+myfiles_allyears[1:11] <- scale(myfiles_allyears[1:11], center = TRUE, scale = TRUE)
+myfiles_allyears$countratio <- scale(myfiles_allyears$countratio, center = TRUE, scale = FALSE)
+
+#data <- myfiles_allyears[1:7]
+#data_orig <- myfiles_allyears[1:6]
+yearpred <- myfiles_allyears[input$predictor]
+data <- cbind(myfiles_allyears[1:7], loss=myfiles_allyears$loss_unscaled)
+
+
+intrain <- createDataPartition(y = data$loss, p = .75, list = FALSE )
+training <- data[intrain,]
+testing <- data[-intrain,]
+
+
+control <- trainControl(method="repeatedcv", number=10, repeats=10) 
+algorithmList <- c('gbm', 'neuralnet')
+set.seed(500)
+
+models <- caretList(loss~., data=training, trControl=control, methodList=algorithmList)
+#plot(models, rep="best")
+results <- resamples(models)
+#summary(results)
+#plot(myfiles_allyears)
+#dotplot(results)
+
+})
+})
 
 
 
@@ -2043,9 +2326,10 @@ panel.cor <- function(x, y, digits=2, prefix="", cex.cor)
   Signif <- symnum(test$p.value, corr = FALSE, na = FALSE, 
                    cutpoints = c(0, 0.001, 0.01, 0.05, 0.1, 1),
                    symbols = c("***", "**", "*", ".", " ")) 
-  
-  text(0.5, 0.5, txt, cex = cex * r) 
-  text(.8, .8, Signif, cex=cex, col=2) 
+ text(0.5, 0.5, txt, cex = 3)
+  text(.8, .8, Signif, cex=3, col=2) 
+  #text(0.5, 0.5, txt, cex = cex * r) 
+  #text(.8, .8, Signif, cex=cex, col=2) 
 } 
 
 yearpred <- myfiles_allyears[input$predictor] 
