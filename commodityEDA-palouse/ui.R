@@ -76,6 +76,8 @@ tags$head(
      
 radioButtons("var", label = "Statistical Summary Method:", choices = c("mean", "cov"), inline = TRUE, selected="mean"),
 
+radioButtons("price", label = "Cost Adjustment:", choices = c("inflation-adjusted", "no-adjustment"), inline = TRUE, selected="inflation-adjusted"),
+
 #      checkboxGroupInput("palousecounties_ID", label = "Idaho Counties:", choices = c("Idaho", "Lewis", "Nez Perce", "Clearwater", "Latah", "Benewah", "Kootenai"), inline = TRUE),
 
 #checkboxGroupInput("palousecounties_OR", label = "Oregon Counties:", choices = c("Okananogan", "Douglas", "Grant", "Benton", "Franklin", "Walla Walla", "Adams", "Lincoln", "Spokane", "Whitman", "Columbia", "Garfield", "Asotin"), inline = TRUE),

@@ -7,6 +7,7 @@ library(ncdf)
 library(data.table)
 library(raster)
 library(maptools)
+library(zoo)
 
 # Define server logic required to summarize and view the selected
 # dataset
@@ -46,7 +47,7 @@ withProgress(message = 'Working', value = 0, {
 
 #--bringing in county shapefile
 
-
+options(scipen=5)
 
 N1 <- "2001"
 N2 <- "2015"
@@ -209,6 +210,10 @@ combined2.df <- transform(combined2.df, monthyear=paste(year, numeric_month, sep
 
 combined2.df <- data.table(combined2.df)
 
+
+
+
+
 #combined2.df$monthyear <- cbind(combined2.df$year, numeric_month)
 
 #combined4cov.df <- combined2.df[,list(eval(parse(text=input$climate))=sd(eval(parse(text=input$climate)))/mean(eval(parse(text=input$climate)))*100), by monthyear]
@@ -228,14 +233,23 @@ combined3mean.df  <- combined2.df[,list(pr=mean(pr), tmmx=mean(tmmx), tmmn=mean(
 #variable <- paste("combined3", input$var, ".df$", input$climate,  sep=""), 
 #newone <- get(variable)
 
-layout(matrix(c(1,2,1,2,3,4,3,4,5,6,5,6,7,8,7,8,9,10,9,10,11,12,11,12),12, 2, byrow=TRUE), widths=c(1.3,.7), heights=c(1,.5,.5,.5,.5,.5,.5,.5,.5,.5,.5,.5,.5,.5,.5,.5,.5,.5,.5,.5,.5,.5,.5,.5,.5))
+layout(matrix(c(1,2,1,2,3,4,3,4,5,6,5,6,7,8,7,8,9,10,9,10,11,12,11,12),12, 2, byrow=TRUE), widths=c(1.6,.4), heights=c(1.5,1,1,1,1,1,1,.5,.5,.5,.5,.5,.5,.5,.5,.5,.5,.5,.5,.5,.5,.5,.5,.5,.5))
 
 #-by year
 totalb <- aggregate(loss~date,palouse4,sum)
 #palouse_loss_year1 <- palouse4[,list(loss=sum(loss)), by = date]
 totalc <- merge(palouse6, totalb, type = "date", all=T)
-
 totalc[is.na(totalc)] <- 0
+cpi <- data.frame(read.csv("/dmine/data/FRED/cpi/CPIAUCSL2001_2015.csv", header = TRUE, strip.white = TRUE))
+#cpi$month <- toupper(cpi$month)
+cpi$month <- as.numeric(cpi$month)
+
+totalc <- merge(totalc, cpi, by=c("month", "year"))
+totalc$loss_adjusted <- totalc$loss * totalc$ratio
+
+
+
+
 totalc <- subset(totalc, year >= input$firstyear & year <= input$lastyear)
 
 
@@ -249,16 +263,29 @@ replace_multiple <- function(x, m){
     return(x)
 }
 
-totald <- replace_multiple(totalc$date, 2)
+totalc$date <- as.yearmon(totalc$date, "%Y.%m")
+totalc$date <- as.Date(totalc$date)
+totalc <- totalc[order(totalc$date) , ]
+#totald <- replace_multiple(as.numeric(totalc$date), 2)
+
+
 
 par(mar=c(6,6,4,2)+1)
 
 
 c = totalc[seq(1, length(totalc),12)]
 #bplott <- barplot(totalc$loss)
-barplot(totalc$loss, names.arg=totald, col="blue", las=2, cex.names=1, cex.main=1.5, cex.axis=1, main = paste(input$damage, " Damage cause ", input$firstyear, " to ",  input$lastyear, "\n", "Commodity: ",  input$commodity, sep=""))
-#axis(1, at=bplott, labels = c$date, las = 2)
 
+if(input$price == "inflation-adjusted") {
+
+
+barplot(totalc$loss_adjusted, names.arg=totalc$date, col="blue", las=2, cex.names=1, cex.main=1.5, cex.axis=1, main = paste(input$damage, " Damage cause ", input$firstyear, " to ",  input$lastyear, "\n", "Commodity: ",  input$commodity, sep=""))
+#axis(1, at=bplott, labels = c$date, las = 2)
+} else {
+
+barplot(totalc$loss, names.arg=totalc$date, col="blue", las=2, cex.names=1, cex.main=1.5, cex.axis=1, main = paste(input$damage, " Damage cause ", input$firstyear, " to ",  input$lastyear, "\n", "Commodity: ",  input$commodity, sep=""))
+
+}
 
 
 

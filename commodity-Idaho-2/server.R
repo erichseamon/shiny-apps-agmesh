@@ -65,7 +65,16 @@ uniquez <<- list.files(paste("/dmine/data/USDA/agmesh-scenarios/", input$state, 
 setwd(monthdir)
 
 
+
+
+
 i <- paste(input$year, ".", input$month, ".", input$commodity, ".csv", sep="")
+
+cpi <- data.frame(read.csv("/dmine/data/FRED/cpi/CPIAUCSL2001_2015.csv", header = TRUE, strip.white = TRUE))
+ick <- subset(cpi, year == input$year)
+input.monthz <- as.numeric(input$month)
+sick <- as.data.frame(subset(ick, month == tolower(month.abb[input.monthz])))
+colnames(sick) <- c("ratio")
 
   setwd("/dmine/data/counties/")
   counties <- readShapePoly('UScounties.shp', 
@@ -77,7 +86,16 @@ i <- paste(input$year, ".", input$month, ".", input$commodity, ".csv", sep="")
   setwd(paste("/dmine/data/USDA/agmesh-scenarios/", input$state, "/month", sep=""))
   x <- as.data.frame(read.csv(i, strip.white = TRUE))
   
+  sickk <- as.data.frame(rep(sick$ratio, each=nrow(x)))
+  colnames(sickk) <- c("ratio") 
+  
+
+ 
   colnames(x) <- c("UNIQUEID", "YEAR", "NAME", "COMMODITYCODE", "MONTHCODE", "COMMODITY", "DAMAGECAUSE", "ACRES", "LOSS")
+ #x$LOSS <- x$LOSS * sickk$ratio 
+
+  
+
   #u <- data.frame(trimws(x$county))
   #colnames(u) <- c("NAME")
   #z <- cbind(x,u)

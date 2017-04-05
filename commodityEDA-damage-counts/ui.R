@@ -74,9 +74,9 @@ shinyUI(fluidPage(
 	 # table with the requested number of observations
 
 	 mainPanel(
-         tags$style(type="text/css",
-          ".shiny-output-error { visibility: hidden; }",
-          ".shiny-output-error:before { visibility: hidden; }"),
+#         tags$style(type="text/css",
+#          ".shiny-output-error { visibility: hidden; }",
+#          ".shiny-output-error:before { visibility: hidden; }"),
     
 
 tabPanelAbout(),
@@ -100,6 +100,14 @@ tabPanelAbout(),
 			    tabPanel("Annual State Counts",
 			             fluidRow(plotOutput("plot7y"),
 			                      dataTableOutput("plot8y")),icon = icon("bar-chart-o")),
+                            tabPanel("Claims Distribution",
+                                     fluidRow(plotOutput("plot7z"))),
+                                              #dataTableOutput("plot8y")),icon = icon("bar-chart-o")),
+
+
+
+
+
 tabPanelMethods())			    
 			    
 

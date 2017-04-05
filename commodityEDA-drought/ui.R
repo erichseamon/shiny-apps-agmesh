@@ -73,9 +73,9 @@ tags$head(
 	 # table with the requested number of observations
 
 	 mainPanel(
-         tags$style(type="text/css",
-          ".shiny-output-error { visibility: hidden; }",
-          ".shiny-output-error:before { visibility: hidden; }"),
+#         tags$style(type="text/css",
+#          ".shiny-output-error { visibility: hidden; }",
+#          ".shiny-output-error:before { visibility: hidden; }"),
     
 
 tabPanelAbout(),

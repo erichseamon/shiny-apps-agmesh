@@ -53,12 +53,12 @@ tags$head(
 
      #p("Instructions: Pick a commodity of interest.  The dashboard will dynamically fill in all the other fields for you on startup.  At any time, you can change the fields to your area or time of interest."),
 
-     #uiOutput("commoditycontrols"),
+     uiOutput("commoditycontrols"),
 
      #selectInput("firstyear", label = "Start year:", selected = 2007, choice = c(2007:2015)), 
      #selectInput("lastyear", label = "End year:", choice = c(2007:2015), selected = 2015),
 #     dateRangeInput("timerange", label = "Year Range", start = "2007-01-01", end = "2015-01-01", startview = "decade", format="yyyy", min = "2007", max = "2015"),
-     #selectInput("state", label = "State", choice = c("Washington", "Idaho", "Oregon"), selected="Washington"),
+     selectInput("state", label = "State", choice = c("Washington", "Idaho", "Oregon"), selected="Washington"),
      #selectInput("year", label = "Year", choice = c("2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015"), selected="2001"),
 #selectInput("month", "month of interest.  Use a number (1-12)", choices = c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12")),
 #     selectInput("commodity", "Choose a commodity:", 
@@ -126,6 +126,12 @@ tags$head(
 			    tabPanel("Treemap",
 			             fluidRow(plotOutput("plot5xx"),
 			                      dataTableOutput("plot8x")), icon = icon("bar-chart-o")),
+
+                            tabPanel("Claim Distribution",
+                                     fluidRow(plotOutput("plot5_dist")), icon = icon("bar-chart-o")),
+
+
+
 			    tabPanel("Neuralnet",
 			             fluidRow(plotOutput("plot5nn"),
 			                      plotOutput("plot5nn2"),

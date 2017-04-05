@@ -2049,6 +2049,215 @@ plot(counties_one, col="blue", add=T)
 })
 
 
+
+
+output$plot8z <- renderDataTable({
+  req(input$commodity)
+  withProgress(message = 'Working', value = 0, {
+
+ setwd("/dmine/data/counties/")
+
+ counties <- readShapePoly('UScounties.shp',
+                          proj4string=CRS
+                          ("+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"))
+ projection = CRS("+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0")
+
+#counties <- counties[grep("Idaho|Washington|Oregon|Montana", counties@data$STATE_NAME),]
+#counties <- counties[grep(input$state, counties@data$STATE_NAME),]
+counties <- subset(counties, STATE_NAME %in% input$state)
+monthdir <- paste("/dmine/data/USDA/agmesh-scenarios/", input$state, sep="")
+yeardir <- paste("/dmine/data/USDA/agmesh-scenarios/", input$state, "/summaries/", sep="")
+#uniquez <- list.files(paste("/dmine/data/USDA/agmesh-scenarios/", input$state, "/month", sep=""))
+maskraster <- raster(paste("/dmine/data/USDA/agmesh-scenarios/", input$state, "/netcdf/pdsi_apr_", input$year, ".nc", sep=""))
+#setwd(monthdir)
+#system("find month -type f -size +75c -exec cp -nv {} month_positive/ \\;")
+
+setwd(paste("/dmine/data/USDA/agmesh-scenarios/", input$state, "/month_positive/", sep=""))
+system("mv *AdjustedGrossRevenue.csv ../commodity_csv_agr_month/")
+uniquez <<- list.files(paste("/dmine/data/USDA/agmesh-scenarios/", input$state, "/month_positive/", sep=""))
+
+
+
+
+
+
+
+
+setwd(yeardir)
+i <- paste(input$year, "_monthly_usda_gridmet_post2001_", input$state, sep="")
+#i <- paste(input$year, ".", input$month, ".", input$commodity, ".csv", sep="")
+
+  setwd("/dmine/data/counties/")
+  counties <- readShapePoly('UScounties.shp',
+                            proj4string=CRS
+                            ("+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"))
+  projection = CRS("+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0")
+  counties <- subset(counties, STATE_NAME %in% input$state)
+  #counties <- counties[grep(input$state, counties@data$STATE_NAME),]
+  setwd(yeardir)
+  x <- as.data.frame(read.csv(i, strip.white = TRUE))
+  DT <- data.table(x)
+
+ #simpleCap <- function(x) {
+  #  s <- strsplit(x, " ")[[1]]
+  #  paste(toupper(substring(s, 1,1)), substring(s, 2),
+  #        sep="", collapse=" ")
+  #}
+
+  #DTnew1a <- data.frame(sapply(DTnew,simpleCap))
+  #colnames(DTnew1a) <- c("commodity_new")
+  #DTnew3 <- cbind(DT, DTnew1a)
+
+  # DTnew3 <- DT
+#  DTnew3$commodity <- DTnew3$commodity_new
+
+#--change to lowercase DT2!!
+  #DT2 <- DT
+  DT2 <- subset(DT, county == input$county)
+  DT2 <- subset(DT2, commodity == input$commodity)
+  #DT2 <- subset(DTnew3, commodity == input$commodity)
+  #DT3 <- data.frame(DT2$acres, DT2$loss)
+  #DT4 <- cbind(x, DT3)
+  DT2loss <- DT2[,list(loss=sum(loss)), by = county]
+  #DT2 <- DT2[, lapply(.SD, sum), by=list(county)]
+  DT2acres <- DT2[,list(acres=sum(acres)), by = county]
+  DTdamage_loss <- DT2[,list(loss=sum(loss)), by = damagecause]
+  DTdamage_acres <- DT2[,list(acres=sum(acres)), by = damagecause]
+  #lengthDT2 <- length(DT2)
+  #DT5 <- matrix(input@commodity, nrow = lengthDT2, ncol = 1)
+  DT6 <- cbind(DT2loss, DT2acres$acres)
+  #--DT7 is for barplot of summarized damage causes for the state, annually, with loss and acres per damage type
+  DT7 <- cbind(DTdamage_loss, DTdamage_acres$acres)
+  setnames(DT7, c("DAMAGECAUSE", "LOSS", "ACRES"))
+  #m <- subset(x, county = "ID")
+  names(counties)[1] <- "county"
+  #colnames(x) <- c("UNIQUEID", "YEAR", "COUNTY", "COMMODITYCODE", "MONTHCODE", "ACRES", "LOSS", "COMMODITY")
+
+  #colnames(u) <- c("NAME")
+  #z <- cbind(u,DT)
+  m <- merge(counties, DT6, by='county')
+  names(m)[7] <- "acres"
+
+  DT7
+  m$loss[is.na(m$loss)] <- 0
+  #m$COMMODITYCODE[is.na(m$COMMODITYCODE)] <- 0
+  m$acres[is.na(m$acres)] <- 0
+
+  #shapefile(m)
+  #--begin polygon work
+  #length(na.omit(m$LOSS))
+  #tt <- colorRampPalette(brewer.pal(11, "Spectral")
+  tt <- colorRampPalette(c("blue", "orange", "red"))
+  #mz <- subset(m, LOSS != 0)
+  #mzacres <- subset(m, acres > 0)
+  lengacres <- length(m$acres)
+  leng <- length(m$loss)
+  #len2 <- tt(len <- length(mz$loss))
+  #len2acres <- tt(len <- length(mzacres$acres))
+  #len2a <- length(mz$loss)
+  #len2a <- length(mzacres$acres)
+  len3 <- tt(len <- length(m$loss))
+  len4 <- tt(len <- length(m$acres))
+orderedcolors2 <- tt(length(m$loss))[order(order(m$loss))]
+  orderedcolors3 <- tt(length(m$acres))[order(order(m$acres))]
+  #newframe <- data.frame(m$LOSS)
+  m[["loss"]][is.na(m[["loss"]])] <- 0
+  m[["acres"]][is.na(m[["acres"]])] <- 0
+  xx <- 1
+  newmatrix <- matrix(data = NA, nrow = leng, ncol = 1)
+
+  for (jj in 1:leng){
+    #if (DT7$LOSS[jj] == 0) {
+      #print("yes this worked, added 0")
+     # newmatrix[jj,] <- 0
+    #} else {
+      #print("yes, this worked, added color")
+      #newmatrix[jj,] <- len3[jj]
+      newmatrix[jj,] <- orderedcolors2[xx]
+      xx <- xx + 1
+    }
+
+  xx <- 1
+  newmatrix_acres <- matrix(data = NA, nrow = leng, ncol = 1)
+
+  for (jj in 1:leng){
+
+    #if (DT7$ACRES[jj] == 0) {
+      #print("yes this worked, added 0")
+     # newmatrix_acres[jj,] <- 0
+    #} else {
+      #print("yes, this worked, added color")
+      #newmatrix[jj,] <- len4[jj]
+      newmatrix_acres[jj,] <- orderedcolors3[xx]
+      xx <- xx + 1
+    }
+
+
+  #newmatrix[newmatrix==0] <- NA
+  #newmatrix2 <- newmatrix[complete.cases(newmatrix[,1])]
+  #newmatrix2 <- subset(newmatrix = TRUE)
+  #newmatrix[newmatrix == NA] <- 0
+  #newmatrix <- c(newmatrix)
+
+  #newmatrix_acres[newmatrix_acres==0] <- NA
+  #newmatrix2acres <- newmatrix_acres[complete.cases(newmatrix_acres[,1])]
+  #newmatrix2acres <- subset(newmatrix = TRUE)
+  #newmatrix_acres[newmatrix_acres == NA] <- 0
+  #newmatrix_acres <- c(newmatrix_acres)
+
+
+  #orderedcolors2 <- colorRampPalette(c(44))
+  #m <- cbind(m$LOSS, newmatrix)
+  #midpoints <- barplot(mz$LOSS)
+  #png(paste("/dmine/data/USDA/agmesh-scenarios/", input$state, "/month_png/", x$YEAR[1], ".", x$MONTHCODE[1], ".", x$COMMODITY[1],  "_plot", sep=""))
+  par(mar=c(5,9,3,1)+1)
+  par(mfrow=c(1,2))
+  layout(matrix(c(1,2,3,4),1, 2, byrow=TRUE))
+  #--turn image horizontal
+plotmonth <- month.abb[x$monthcode[1]]
+  plotyear <- x$year[1]
+  plotcommodity <- x$commodity[1]
+
+  midpoint_loss <- (max(m$loss) + min(m$loss)/2)
+  midpoint_acres <- (max(m$acres) + min(m$acres)/2)
+
+  cols = c("blue")
+
+  options(scipen=5)
+ ### b <- barplot(DT7$LOSS, names.arg = DT7$DAMAGECAUSE, las=2, col = cols, horiz=TRUE, cex.names = 0.81, cex.axis = 0.8, main = paste(input$commodity, " - Damage Report", sep=""))
+  #text(bb, midpoint_loss, labels=mz$loss, srt=90)
+  #plot(m, col = newmatrix, main = paste(input$state, " crop loss $ \n", " ", plotyear, "\n", plotcommodity, sep=""))
+  par(mar=c(0,0,3,1)+1)
+
+   setwd("/dmine/data/counties/")
+
+    counties <- readShapePoly('UScounties.shp',
+                              proj4string=CRS
+                              ("+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"))
+    projection = CRS("+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0")
+    counties <- subset(counties, STATE_NAME %in% input$state)
+    counties_one <- subset(counties, NAME %in% input$county)
+    ###plot(counties, main = paste("State: ", input$state, "\n   County: ", input$county, "   Year: ", input$year, sep=""))
+    ###plot(counties_one, col="blue", add=T)
+
+
+
+  #bb <- barplot(DT7$ACRES, names.arg = DT7$DAMAGECAUSE, las=2, col = newmatrix_acres, horiz=TRUE)
+  #text(b, midpoint_acres, labels=mzacres$acres, xpd=NA, col = "White")
+  #plot(m, col = newmatrix_acres, main = paste(input$state, " crop loss acres \n", " ", plotyear, "\n", plotcommodity, sep=""))
+})
+
+})
+
+
+
+
+
+
+
+
+
+
 output$plot8 <- renderDataTable({
   req(input$commodity)
   withProgress(message = 'Working', value = 0, {
@@ -2077,6 +2286,7 @@ output$plot8 <- renderDataTable({
     #--change to lowercase DT2!!
     #DT2 <- DT
     DT2 <- subset(DT, county == input$county)
+    DT2 <- subset(DT2, commodity == input$commodity)
     #DT2 <- subset(DTnew3, commodity == input$commodity)
     #DT3 <- data.frame(DT2$acres, DT2$loss)
     #DT4 <- cbind(x, DT3)
