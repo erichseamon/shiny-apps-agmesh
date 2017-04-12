@@ -195,6 +195,12 @@ library(maps)
 startTSColin <- "2016-06-01"
 endTSColin <- "2017-03-01"
 
+
+precipData <- getPrecip(gfunction = "PR", states = "Idaho", statevar = "PR",
+                        startDate = "2016-06-01",
+                        endDate = "2017-03-01")
+
+
 precipData <- getPrecip(gfunction = input$vari2, states = input$state, statevar = input$vari, 
                         startDate = as.character(input$time1), 
                         endDate = as.character(input$time2))
