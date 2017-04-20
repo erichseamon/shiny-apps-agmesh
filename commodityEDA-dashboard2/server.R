@@ -490,7 +490,7 @@ i <- paste(input$year, "_monthly_usda_gridmet_post2001_", input$state, sep="")
   setwd(yeardir)
   x <- as.data.frame(read.csv(i, strip.white = TRUE))
   DT <- data.table(x)
-
+  # DT2 <- DT
   DT2 <- subset(DT, commodity == input$commodity)
   DT2loss <- DT2[,list(loss=sum(loss)), by = county]
   DT2$acres <- as.numeric(DT2$acres)
@@ -504,8 +504,80 @@ i <- paste(input$year, "_monthly_usda_gridmet_post2001_", input$state, sep="")
 
   m <- merge(counties, DT6, by='county')
 
-pal <- colorNumeric(c("red", "green", "blue"), 1:10)
+ names(m)[7] <- "acres"
+
+
+  m$loss[is.na(m$loss)] <- 0
+  m$acres[is.na(m$acres)] <- 0
+
+  tt <- colorRampPalette(c("light blue", "dark blue"), space = "Lab")
+  lengacres <- length(m$acres)
+  leng <- length(m$loss)
+  len3 <- tt(len <- length(m$loss))
+  len4 <- tt(len <- length(m$acres))
+
+
+  orderedcolors2 <- tt(length(m$loss))[order(m$loss)]
+  orderedcolors3 <- tt(length(m$acres))[order(m$acres)]
+  m[["loss"]][is.na(m[["loss"]])] <- 0
+  m[["acres"]][is.na(m[["acres"]])] <- 0
+
+  xx <- 1
+  newmatrix <- matrix(data = NA, nrow = leng, ncol = 1)
+  for (jj in 1:leng){
+    if (m$loss[jj] == 0) {
+      #print("yes this worked, added 0")
+
+
+newmatrix[jj,] <- 0
+    } else {
+      #print("yes, this worked, added color")
+      #newmatrix[jj,] <- len3[jj]
+      newmatrix[jj,] <- orderedcolors2[xx]
+      xx <- xx + 1
+    }}
+
+  xx <- 1
+  newmatrix_acres <- matrix(data = NA, nrow = leng, ncol = 1)
+
+  for (jj in 1:leng){
+
+    if (m$acres[jj] == 0) {
+      newmatrix_acres[jj,] <- 0
+    } else {
+      newmatrix_acres[jj,] <- orderedcolors3[xx]
+      xx <- xx + 1
+    }}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+pal <- colorNumeric(palette = c("blue", "red"),
+                               domain = m$loss)
 exte <- as.vector(extent(counties))
-leaflet(data = m[[6]]) %>% addProviderTiles("Stamen.TonerLite") %>% fitBounds(exte[1], exte[3], exte[2], exte[4]) %>% addPolygons(color = pal(1:nrow(m)), weight = 1)
+
+leaflet(data = m) %>% addProviderTiles("Stamen.TonerLite") %>% fitBounds(exte[1], exte[3], exte[2], exte[4]) %>% addPolygons(color = ~pal(loss), weight = 1)
 })
 })

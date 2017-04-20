@@ -13,7 +13,13 @@ header <- dashboardHeader(title = "DMINE DASHBOARD", disable = FALSE)
 sidebar <- dashboardSidebar(
   tags$head(
     tags$link(rel = "stylesheet", type = "text/css", href = "custom.css"),
-    tags$script(src = "custom.js")
+    tags$script(src = "custom.js"),
+    tags$style(HTML('
+
+   .skin-blue .main-sidebar {
+                              background-color: #2a6894;
+                              }
+'))
   ),
   sidebarMenu(
     menuItem(text = "KPIs",
@@ -28,6 +34,8 @@ sidebar <- dashboardSidebar(
  selectInput("state", label = "State", choice = c("Washington", "Idaho", "Oregon"), selected = "Idaho"),
 
 selectInput("year", label = "Year", choice = c("2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015"), selected = "2002"),
+selectInput("month", label = "Month", choice = c(1,2,3,4,5,6,7,8,9,10,11,12), selected = 1),
+
 
 uiOutput("commoditycontrols"),
 uiOutput("countycontrols"),
@@ -78,4 +86,4 @@ fluidRow(plotOutput("plot7y"))
 )   # /tabItems
 ) # /dashboardBody
 
-dashboardPage(header, sidebar, body, skin = "green")
+dashboardPage(header, sidebar, body, skin = "blue")
