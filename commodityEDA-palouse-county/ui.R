@@ -23,6 +23,8 @@ tags$head(
   # updated in the output area immediately as you type
   sidebarLayout(
     sidebarPanel(
+tags$style(".well {background-color:#71acd7;}"),
+
 
      #tags$a(div(img(src='dmine-commodity.png', width =150), style="text-align: center;"), href="https://dmine.io"),
      #img(src='dmine-commodity.png', width = 100, align = "center"),
@@ -58,7 +60,7 @@ tags$head(
      #selectInput("firstyear", label = "Start year:", selected = 2007, choice = c(2007:2015)), 
      #selectInput("lastyear", label = "End year:", choice = c(2007:2015), selected = 2015),
 #     dateRangeInput("timerange", label = "Year Range", start = "2007-01-01", end = "2015-01-01", startview = "decade", format="yyyy", min = "2007", max = "2015"),
-     #selectInput("state", label = "State", choice = c("Washington", "Idaho", "Oregon"), selected="Washington"),
+     #selectInput("state", label = "State", choice = c("Washington", "Idaho", "Oregon", "palouse"), selected="Washington"),
      #selectInput("year", label = "Year", choice = c("2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015"), selected="2001"),
 #selectInput("month", "month of interest.  Use a number (1-12)", choices = c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12")),
 #     selectInput("commodity", "Choose a commodity:", 
@@ -81,13 +83,13 @@ tags$head(
 
 
 
-     checkboxGroupInput("climate", label = "Climate variables:", choices = c("Precipitation" = "pr", "Max Temp" = "tmmx", "Min Temp" = "tmmn", "Relative Min Humidity" = "rmin", "Relative Max Humidity" = "rmax", "Palmer Drought Index" = "pdsi", "100 Hr Burn Index" = "fm100", "1000 Hr Burn Index" = "fm1000", "Potential ET" = "pet"), inline= TRUE, selected=c("pr", "pdsi")),
+     checkboxGroupInput("climate", label = "Climate variables:", choices = c("Precipitation" = "pr", "Max Temp" = "tmmx", "Min Temp" = "tmmn", "Relative Min Humidity" = "rmin", "Relative Max Humidity" = "rmax", "Palmer Drought Index" = "pdsi", "100 Hr Burn Index" = "fm100", "1000 Hr Burn Index" = "fm1000", "Potential ET" = "pet", "Soil Moisture Short Term" = "soil_moisture_shorterm"), inline= TRUE, selected=c("pr", "pdsi")),
      selectInput("predictor", label = "Predictor Variable:", choice = c("Crop Loss ($)" = "loss", "Crop Claim Frequency" = "countratio"), selected = "loss"),
 
 
      #actionButton("myLoader", "Go!")    
      downloadButton("report", "Generate report") 
-    , width=3),    
+    , width=2),    
      # Show the caption, a summary of the dataset and an HTML 
 	 # table with the requested number of observations
 
