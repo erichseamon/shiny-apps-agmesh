@@ -1,12 +1,14 @@
 library(datasets)
-library(rgdal)
-library(leaflet)
+#library(rgdal)
+#library(leaflet)
 library(png)
 library(jpeg)
-library(ncdf)   
+library(ncdf4)   
 library(maptools)
 library(data.table)
 library(raster)
+library(gplots)
+library(rdrop2)
 
 # Define server logic required to summarize and view the selected
 # dataset
@@ -32,15 +34,15 @@ input$submit2
 isolate({
 
 
-
-
-
+  token <- drop_auth(rdstoken = "./droptoken.rds")
+  drop_read_csv("/apps/dmine/USDA/agmesh_scenarios/Allstates/climatematrix/ID_Benewah_WHEAT_Drought_apr1.csv", dest = "/tmp/", dtoken = token)
+    
 library(plyr)
-climate_cropcombo_county_xy <- function(commodity1, damage1, climate_variable, response, matrixnumber) {
+#climate_cropcombo_county_xy <- function(commodity1, damage1, climate_variable, response, matrixnumber) {
 
-setwd("/dmine/data/counties/")
-
-counties <- readShapePoly('UScounties.shp', 
+#setwd("/dmine/data/counties/")
+drop_download("/apps/dmine/counties/UScounties.shp", local_path = "/tmp/UScounties.shp")
+counties <- readShapePoly('/apps/dmine/counties/UScounties.shp', 
                           proj4string=CRS
                           ("+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"))
 projection = CRS("+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0")
@@ -459,7 +461,7 @@ monthzzz <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep")
 
   my_palette <- colorRampPalette(c("red", "yellow", "green"))(n = 108)
   
-  setwd("/dmine/data/USDA/agmesh-scenarios/Allstates/climatematrix_pngs")
+  #setwd("/dmine/data/USDA/agmesh-scenarios/Allstates/climatematrix_pngs")
  
 #  png(filename=paste(state1, "_", county1, "_", damage1, "_", climate_variable12, "_designmatrix.png", sep=""))
   lblcol <- c(9:1)
@@ -794,6 +796,7 @@ output$climatematrixmap <- renderPlot({
 #input$submit2
 #isolate({
 library(RColorBrewer)
+library(plyr)
 library(dplyr)
 
 setwd("/dmine/data/USDA/agmesh-scenarios/Allstates/climatematrix_correlations/")
@@ -830,7 +833,7 @@ tables <- lapply(data, read.csv, header = TRUE)
 
 tables <- lapply(tables, function(x) { x["X"] <- NULL; x }) #--remove first index row from each list
 
-tables <- lapply(tables, function(x) arrange(x, -row_number())) #--(flips matrix - puts jan as 1st row and sept as 9th row)
+tables <- lapply(tables, function(x) dplyr::arrange(x, -row_number())) #--(flips matrix - puts jan as 1st row and sept as 9th row)
 
 
 monthly <- match(input$monthmatrix_end, tolower(month.abb))
@@ -2847,7 +2850,7 @@ setwd(monthdir)
 
 i <- paste(input$year, ".", input$month, ".", input$commodity, ".csv", sep="")
 
-cpi <- data.frame(read.csv("/dmine/data/FRED/cpi/CPIAUCSL2001_2015.csv", header = TRUE, strip.white = TRUE))
+cpi <- data.frame(read.csv("data/CPIAUCSL2001_2015.csv", header = TRUE, strip.white = TRUE))
 ick <- subset(cpi, year == input$year)
 input.monthz <- as.numeric(input$month)
 sick <- as.data.frame(subset(ick, month == tolower(month.abb[input.monthz])))
@@ -4071,7 +4074,7 @@ setwd(monthdir)
 
 i <- paste(input$year2, ".", input$month, ".", input$commodity, ".csv", sep="")
 
-cpi <- data.frame(read.csv("/dmine/data/FRED/cpi/CPIAUCSL2001_2015.csv", header = TRUE, strip.white = TRUE))
+cpi <- data.frame(read.csv("data/CPIAUCSL2001_2015.csv", header = TRUE, strip.white = TRUE))
 ick <- subset(cpi, year == input$year2)
 input.monthz <- as.numeric(input$month)
 sick <- as.data.frame(subset(ick, month == tolower(month.abb[input.monthz])))

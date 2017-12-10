@@ -1,31 +1,31 @@
 
 library(shinythemes)
 
-tabPanelAbout <- source("/srv/shiny-server/commodityEDA-dashboard1/about.R")$value
-tabPanelAbout1 <- source("/srv/shiny-server/commodityEDA-dashboard1/about1.R")$value
-tabPanelAbout2 <- source("/srv/shiny-server/commodityEDA-dashboard1/about2.R")$value
-tabPanelAbout3 <- source("/srv/shiny-server/commodityEDA-dashboard1/about3.R")$value
-tabPanelAbout4 <- source("/srv/shiny-server/commodityEDA-dashboard1/about4.R")$value
-tabPanelAbout5 <- source("/srv/shiny-server/commodityEDA-dashboard1/about5.R")$value
-tabPanelAbout6 <- source("/srv/shiny-server/commodityEDA-dashboard1/about6.R")$value
-tabPanelAbout7 <- source("/srv/shiny-server/commodityEDA-dashboard1/about7.R")$value
-tabPanelAbout8 <- source("/srv/shiny-server/commodityEDA-dashboard1/about8.R")$value
+tabPanelAbout <- source("about.R")$value
+tabPanelAbout1 <- source("about1.R")$value
+tabPanelAbout2 <- source("about2.R")$value
+tabPanelAbout3 <- source("about3.R")$value
+tabPanelAbout4 <- source("about4.R")$value
+tabPanelAbout5 <- source("about5.R")$value
+tabPanelAbout6 <- source("about6.R")$value
+tabPanelAbout7 <- source("about7.R")$value
+tabPanelAbout8 <- source("about8.R")$value
 
 
-tabPanelMethods1 <- source("/srv/shiny-server/commodityEDA-dashboard1/methods1.R")$value
-tabPanelMethods1a <- source("/srv/shiny-server/commodityEDA-dashboard1/methods1a.R")$value
-tabPanelMethods1b <- source("/srv/shiny-server/commodityEDA-dashboard1/methods1b.R")$value
-tabPanelMethods1c <- source("/srv/shiny-server/commodityEDA-dashboard1/methods1c.R")$value
-tabPanelMethods2 <- source("/srv/shiny-server/commodityEDA-dashboard1/methods2.R")$value
-tabPanelMethods3 <- source("/srv/shiny-server/commodityEDA-dashboard1/methods3.R")$value
-tabPanelMethods4 <- source("/srv/shiny-server/commodityEDA-dashboard1/methods4.R")$value
-tabPanelMethods5 <- source("/srv/shiny-server/commodityEDA-dashboard1/methods5.R")$value
-tabPanelMethods6 <- source("/srv/shiny-server/commodityEDA-dashboard1/methods6.R")$value
-tabPanelMethods7 <- source("/srv/shiny-server/commodityEDA-dashboard1/methods7.R")$value
-tabPanelMethods8 <- source("/srv/shiny-server/commodityEDA-dashboard1/methods8.R")$value
+tabPanelMethods1 <- source("methods1.R")$value
+tabPanelMethods1a <- source("methods1a.R")$value
+tabPanelMethods1b <- source("methods1b.R")$value
+tabPanelMethods1c <- source("methods1c.R")$value
+tabPanelMethods2 <- source("methods2.R")$value
+tabPanelMethods3 <- source("methods3.R")$value
+tabPanelMethods4 <- source("methods4.R")$value
+tabPanelMethods5 <- source("methods5.R")$value
+tabPanelMethods6 <- source("methods6.R")$value
+tabPanelMethods7 <- source("methods7.R")$value
+tabPanelMethods8 <- source("methods8.R")$value
 
-tabPanelMethods <- source("/srv/shiny-server/commodityEDA-dashboard1/methods.R")$value 
-tabPanelOverview <- source("/srv/shiny-server/commodityEDA-dashboard1/overview.R")$value
+tabPanelMethods <- source("methods.R")$value 
+tabPanelOverview <- source("overview.R")$value
 
 
 
