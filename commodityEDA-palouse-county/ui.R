@@ -83,12 +83,21 @@ tags$style(".well {background-color:#71acd7;}"),
 
 
 
+<<<<<<< HEAD
      checkboxGroupInput("climate", label = "Climate variables:", choices = c("Precipitation" = "pr", "Max Temp" = "tmmx", "Palmer Drought Index" = "pdsi", "100 hour burn rate" = "fm100", "1000 hour burn rate" = "fm1000", "Potential ET" = "pet"), inline= TRUE, selected=c("pr", "pdsi")),
      selectInput("predictor", label = "Predictor Variable:", choice = c("Cubed Crop Loss ($)" = "cube_loss"), selected = "cube_loss"),
 
 
      #actionButton("myLoader", "Go!")    
      downloadButton("report", "Submit") 
+=======
+     checkboxGroupInput("climate", label = "Climate variables:", choices = c("Precipitation" = "pr", "Max Temp" = "tmmx", "Min Temp" = "tmmn", "Relative Min Humidity" = "rmin", "Relative Max Humidity" = "rmax", "Palmer Drought Index" = "pdsi", "100 Hr Burn Index" = "fm100", "1000 Hr Burn Index" = "fm1000", "Potential ET" = "pet", "Soil Moisture Short Term" = "soil_moisture_shorterm"), inline= TRUE, selected=c("pr", "pdsi")),
+     selectInput("predictor", label = "Predictor Variable:", choice = c("Crop Loss ($)" = "loss", "Crop Claim Frequency" = "countratio"), selected = "loss"),
+
+
+     #actionButton("myLoader", "Go!")    
+     downloadButton("report", "Generate report") 
+>>>>>>> c7f50eba9bec24d780036d3943b7a80fb4df3b46
     , width=2),    
      # Show the caption, a summary of the dataset and an HTML 
 	 # table with the requested number of observations

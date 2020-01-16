@@ -15,6 +15,7 @@ shinyServer(function(input, output) {
 
 
 
+<<<<<<< HEAD
 
 output$plot5ab2 <- renderPrint({
 #req(input$commodity)
@@ -113,6 +114,8 @@ summary(lmcount)
 
 
 
+=======
+>>>>>>> c7f50eba9bec24d780036d3943b7a80fb4df3b46
 output$plot5aa <- renderPlot({
 #req(input$commodity)
   withProgress(message = 'Working', value = 0, {
@@ -297,6 +300,7 @@ treemap(myfiles_allyears, #Your data frame object
 })
 })
 
+<<<<<<< HEAD
 output$plotpairtable2 <- renderDataTable({
 #  req(input$commodity)
   withProgress(message = 'Working', value = 0, {
@@ -333,6 +337,8 @@ data <- cbind(myfiles_allyears[input$climate], yearpred, county=myfiles_allyears
 
 
 
+=======
+>>>>>>> c7f50eba9bec24d780036d3943b7a80fb4df3b46
 output$plotpairtable <- renderDataTable({
 #  req(input$commodity)
   withProgress(message = 'Working', value = 0, {
@@ -491,6 +497,7 @@ MSE.nn <- sum((test.r - pr.nn_)^2)/nrow(test_)
 
 
 
+<<<<<<< HEAD
 output$plot5nn_revised <- renderPlot({
 #  req(input$commodity)
   withProgress(message = 'Working', value = 0, {
@@ -596,6 +603,8 @@ MSE.nn <- sum((test.r - pr.nn_)^2)/nrow(test_)
 
 
 
+=======
+>>>>>>> c7f50eba9bec24d780036d3943b7a80fb4df3b46
 output$plot5nn3 <- renderPlot({
 #  req(input$commodity)
   withProgress(message = 'Working', value = 0, {
@@ -760,6 +769,7 @@ legend('bottomright',legend=c('NN','LM'),pch=18,col=c('red','blue'))
 
 
 
+<<<<<<< HEAD
 output$plot5nn2_revised <- renderPlot({
 #  req(input$commodity)
   withProgress(message = 'Working', value = 0, {
@@ -859,6 +869,8 @@ legend('bottomright',legend='LM',pch=18,col='blue', bty='n', cex=.95)
 
 
 
+=======
+>>>>>>> c7f50eba9bec24d780036d3943b7a80fb4df3b46
 
 
 
@@ -1286,7 +1298,10 @@ output$plotregression <- renderPlot({
 library(DAAG)
 
 setwd("/dmine/data/USDA/agmesh-scenarios/palouse/summaries3/")
+<<<<<<< HEAD
 
+=======
+>>>>>>> c7f50eba9bec24d780036d3943b7a80fb4df3b46
 #setwd(paste("/dmine/data/USDA/agmesh-scenarios/", input$state,  "/summaries/annual_county_summaries/", sep=""))
 #files <- list.files(pattern = "\\_WHEAT_drought$")
 #myfiles = do.call(rbind, lapply(files, function(x) 
@@ -1295,6 +1310,7 @@ setwd("/dmine/data/USDA/agmesh-scenarios/palouse/summaries3/")
 #names(myfiles)[19] <- c("year") 
 #myfiles$prpet <- (myfiles$pr - myfiles$pet)
 #myfiles <- read.csv("WHEAT_drought_summary")
+<<<<<<< HEAD
 
 myfiles <- read.csv("1989-2015_combined_revised.csv", strip.white = TRUE)
 
@@ -1310,6 +1326,15 @@ myfiles_allyears <- subset(myfiles, , c(tmmn, rmin, rmax, pr, pdsi, pet, tmmx, s
 
 
 
+=======
+myfiles <- read.csv("1989-2015_combined_revised.csv", strip.white = TRUE)
+myfiles <- data.frame(myfiles)
+#myfiles_allyears <- subset(myfiles, , c(pr, pdsi, pet, tmmx, erc, countratio, loss, acres, count, county, year))
+myfiles$prpet <- myfiles$pr - myfiles$pet
+myfiles_allyears <- subset(myfiles, , c(tmmn, rmin, rmax, pr, pdsi, pet, tmmx, soil_moisture_shorterm, soil_moisture_longterm, prpet, erc, countratio, loss, acres, count, county, year))
+
+
+>>>>>>> c7f50eba9bec24d780036d3943b7a80fb4df3b46
 #myfiles_allyears <- subset(myfiles, , c(tmmn, rmin, rmax, fm100, fm1000, pr, pdsi, pet, tmmx, erc, loss, acres, county, year))
 
 
@@ -1360,6 +1385,7 @@ pairs(data, lower.panel=panel.smooth, upper.panel=panel.cor)
 
 
 
+<<<<<<< HEAD
 output$plotregression2 <- renderPlot({
  # req(input$commodity)
   withProgress(message = 'Working', value = 0, {
@@ -1425,6 +1451,8 @@ pairs(data, lower.panel=panel.smooth, upper.panel=panel.cor)
 
 
 
+=======
+>>>>>>> c7f50eba9bec24d780036d3943b7a80fb4df3b46
 output$plot7y <- renderPlot({
   req(input$commodity)
   withProgress(message = 'Working', value = 0, {
@@ -1658,6 +1686,7 @@ rparty.fit
 })
 })
 
+<<<<<<< HEAD
 output$plot7dd2 <- renderPlot({
  # req(input$commodity)
   withProgress(message = 'Working', value = 0, {
@@ -1741,6 +1770,8 @@ rparty.fit
 
 
 
+=======
+>>>>>>> c7f50eba9bec24d780036d3943b7a80fb4df3b46
 
 output$plot7d <- renderPlot({
   req(input$commodity)
