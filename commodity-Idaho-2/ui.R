@@ -1,6 +1,6 @@
 # Define UI for dataset viewer application
 library(shinythemes)
-library(shinyBS)
+#library(shinyBS)
 tabPanelAbout <- source("/srv/shiny-server/commodityEDA-Idaho-2/about.R")$value
 tabPanelMethods <- source("/srv/shiny-server/commodityEDA-Idaho-2/methods.R")$value        
 

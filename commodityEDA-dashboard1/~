@@ -1,0 +1,342 @@
+# Define UI for dataset viewer application
+library(shinythemes)
+
+tabPanelAbout <- source("/srv/shiny-server/commodityEDA-dashboard1/about.R")$value
+tabPanelAbout1 <- source("/srv/shiny-server/commodityEDA-dashboard1/about1.R")$value
+tabPanelAbout2 <- source("/srv/shiny-server/commodityEDA-dashboard1/about2.R")$value
+tabPanelAbout3 <- source("/srv/shiny-server/commodityEDA-dashboard1/about3.R")$value
+tabPanelAbout4 <- source("/srv/shiny-server/commodityEDA-dashboard1/about4.R")$value
+tabPanelAbout5 <- source("/srv/shiny-server/commodityEDA-dashboard1/about5.R")$value
+tabPanelAbout6 <- source("/srv/shiny-server/commodityEDA-dashboard1/about6.R")$value
+tabPanelAbout7 <- source("/srv/shiny-server/commodityEDA-dashboard1/about7.R")$value
+
+tabPanelMethods1 <- source("/srv/shiny-server/commodityEDA-dashboard1/methods1.R")$value
+tabPanelMethods1a <- source("/srv/shiny-server/commodityEDA-dashboard1/methods1a.R")$value
+tabPanelMethods1b <- source("/srv/shiny-server/commodityEDA-dashboard1/methods1b.R")$value
+tabPanelMethods1c <- source("/srv/shiny-server/commodityEDA-dashboard1/methods1c.R")$value
+tabPanelMethods2 <- source("/srv/shiny-server/commodityEDA-dashboard1/methods2.R")$value
+tabPanelMethods3 <- source("/srv/shiny-server/commodityEDA-dashboard1/methods3.R")$value
+tabPanelMethods4 <- source("/srv/shiny-server/commodityEDA-dashboard1/methods4.R")$value
+tabPanelMethods5 <- source("/srv/shiny-server/commodityEDA-dashboard1/methods5.R")$value
+tabPanelMethods6 <- source("/srv/shiny-server/commodityEDA-dashboard1/methods6.R")$value
+tabPanelMethods7 <- source("/srv/shiny-server/commodityEDA-dashboard1/methods7.R")$value
+
+tabPanelMethods <- source("/srv/shiny-server/commodityEDA-dashboard1/methods.R")$value 
+tabPanelOverview <- source("/srv/shiny-server/commodityEDA-dashboard1/overview.R")$value
+
+
+
+
+
+shinyUI(fluidPage(
+   tags$head(
+    tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
+  ),
+
+
+
+
+  
+  # Application title
+  #titlePanel("Commodity Loss DROUGHT Dashboard
+  
+  #tags$div(class="header", checked=NA,
+  #             tags$a(href="https://dmine.io", "Back to DMINE.io Dashboards") 
+  #    ), 
+  # Sidebar with controls to provide a caption, select a dataset,
+  # and specify the number of observations to view. Note that
+  # changes made to the caption in the textInput control are
+  # updated in the output area immediately as you type
+  sidebarLayout(
+    sidebarPanel(
+
+
+conditionalPanel(condition="input.conditionedPanels==5",
+
+selectInput("state5", label = "State", choice = c("Washington", "Idaho", "Oregon"), selected="Idaho"),
+
+#selectInput("state", label = "State", choice = c("Washington", "Idaho", "Oregon"), selected="Idaho"),
+
+ selectInput("year5", label = "Year", choice = c("2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015"), selected="2001")
+
+
+),
+
+
+ 
+conditionalPanel(condition="input.conditionedPanels==4",
+
+tags$style(".well {background-color:#71acd7;}"),
+
+
+ tags$div(class="h4", checked=NA, style="text-align: center",
+           tags$b(href="https://dmine.io/climate-dashboards/", "Agriculture Knowledge Discovery Dashboard")
+     ),
+
+
+ tags$div(class="h5", checked=NA, style="color:darkblue; text-align: center",
+           tags$b(href="https://dmine.io/climate-dashboards/", "Step 2: Data Assembly")
+),
+    p("Choose a state and a year to look at USDA claims records"),
+
+
+selectInput("state", label = "State", choice = c("Washington", "Idaho", "Oregon"), selected="Idaho"),
+
+#selectInput("state", label = "State", choice = c("Washington", "Idaho", "Oregon"), selected="Idaho"),
+
+ selectInput("year", label = "Year", choice = c("2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015"), selected="2001")
+
+#selectInput("month", "month of interest.  Use a number (1-12)", choices = c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"))
+
+#checkboxGroupInput("vari", label = "Climate variables:", choices = c("Precipitation" = "PR", "Max Temp" = "TMMX", "Min Temp" = "TMMN", "Relative Min Humidity" = "RMIN", "Relative Max Humidity" = "RMAX", "Palmer Drought Index" = "PDSI", "100 Hr Burn Index" = "FM100", "1000 Hr Burn Index" = "FM1000", "Potential ET" = "PET", "Energy Release Component" = "ERC", "Daily Specific Humidity" = "SPH", "Solar Radiation" = "SRAD", "Wind Direction" = "TH", "Wind Speed" = "VS"), inline= TRUE, selected=c("PR"))
+
+#checkboxGroupInput("vari2", label = "Commodity variables:", choices = c("Year" = "year", "Month" = "month", "County FIPS" = "countyfips", "statecode" = "statecode", "state" = "state", "countycode" = "countycode", "County" = "county", "commoditycode" = "commoditycode", "Commodity" = "commodity", "Insurance plan code" = "insuranceplancode", "insurancename" = "insurancename", "stagecode" = "stagecode", "damagecausecode" = "damagecausecode", "damagecause" = "damagecause", "monthcode" = "monthcode", "acres" = "acres", "loss" = "loss"), inline= TRUE, selected=c("year", "month", "countyfips", "statecode"))
+
+),
+
+conditionalPanel(condition="input.conditionedPanels==3",
+
+ tags$div(class="h4", checked=NA, style="text-align: center",
+           tags$b(href="https://dmine.io/climate-dashboards/", "Agriculture Knowledge Discovery Dashboard")
+     ),
+tags$p(),
+ tags$div(class="h5", checked=NA, style="color:darkblue; text-align: center",
+           tags$b(href="https://dmine.io/climate-dashboards/", "DMINE is developed as part of collaboration with scientists @ the University of Idaho and Oregon State University, and is funded thru NOAA grant # NA15OAR4310145")
+),
+
+
+     tags$a(div(img(src='ui.png', width =100), style="text-align: center;"), href="https://dmine.io"),
+tags$p(),
+tags$p(),
+tags$a(div(img(src='osu.png', width =100), style="text-align: center;"), href="https://dmine.io"),
+tags$p(),
+tags$p(),
+tags$a(div(img(src='noaa.png', width =100), style="text-align: center;"), href="https://dmine.io")
+
+
+),
+
+conditionalPanel(condition="input.conditionedPanels==1",
+
+     #tags$a(div(img(src='dmine-commodity-Dash-stateloss.png', width =150), style="text-align: center;"), href="https://dmine.io"),
+     #img(src='dmine-commodity.png', width = 100, align = "center"),
+     #h4("Ag Commodity Loss DAMAGE Dashboard", align = "center"),
+
+#     tags$div(class="header", checked=NA,
+#                tags$a(href="https://dmine.io/climate-dashboards/", "Back to DMINE.io", align = "center"),
+#                tags$p(),
+#		tags$a(href="http://dmine.io:3838/commodityEDA-Idaho-2-normal", "Commodity Loss GENERAL Dashboard", align = "center"),
+#		tags$p(),
+#                tags$a(href="http://dmine.io:3838/commodityEDA-drought-animation", "Commodity Loss Animation Dashboard", align = "center"),
+#		tags$p()
+#         ),
+
+    # tags$div(class="header", checked=NA,
+    #           tags$a(href="https://dmine.io/climate-dashboards/", "Back to DMINE.io Dashboards")
+    #     ),
+
+
+ tags$div(class="h4", checked=NA, style="text-align: center",
+           tags$b(href="https://dmine.io/climate-dashboards/", "Agriculture Knowledge Discovery Dashboard")
+     ),
+
+
+ tags$div(class="h5", checked=NA, style="color:darkblue; text-align: center",
+           tags$b(href="https://dmine.io/climate-dashboards/", "Step 3: EDA")
+),
+
+     uiOutput("commoditycontrols"),
+
+     selectInput("state2", label = "State", choice = c("Washington", "Idaho", "Oregon"), selected="Idaho"),
+
+#dateRangeInput('dateRange',
+#      label = 'Date range input: yyyy',
+#      start = "2001", end = "2015"
+#    ),
+
+ selectInput("year2", label = "Year", choice = c("2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015"), selected="2004"),
+
+
+selectInput("month", "Month of interest", choices = c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12")),
+#     selectInput("commodity", "Choose a commodity:", 
+#                  choices = c("Apples", "Wheat", "Barley", "Sugar Beets", "Cherries", "Grapes", "Adjusted Gross Revenue", "Green Peas", "All Other Crops", "Pears", "Canola", "Sweet Corn", "Mint", "Potatoes", "Dry Peas", "Processing Beans", "Dry Beans", "Onions", "Cranberries", "Corn", "Oats", "Alfalfa Seed", "Fresh Apricots", "Fresh Freestone Peaches", "Nursery (GF&C)", "Fresh Nectarines", "Mustard", "Blueberries", "Adjusted Gross Revenue-Lite", "Plums", "Soybeans", "Whole Farm Revenue Protection", "Buckwheat")),
+     
+     #uiOutput("countycontrols"),
+     #uiOutput("damagecontrols"), 
+
+br(),
+ tags$div(class="h5", checked=NA, style="color:darkblue",
+           tags$b(href="https://dmine.io/climate-dashboards/", "Claim Distribution")),
+
+selectInput("startyear", label = "Start Year", choice = c("2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015"), selected="2001"),
+
+     selectInput("endyear", label = "End Year", choice = c("2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015"), selected="2005")
+     #actionButton("myLoader", "Go!")    
+     #downloadButton("report", "Generate report") 
+        
+     # Show the caption, a summary of the dataset and an HTML 
+	 # table with the requested number of observations
+),
+
+
+conditionalPanel(condition="input.conditionedPanels==6",
+ tags$div(class="h4", checked=NA, style="text-align: center",
+           tags$b(href="https://dmine.io/climate-dashboards/", "Agriculture Knowledge Discovery Dashboard")
+     ),
+
+ tags$div(class="h5", checked=NA, style="color:darkblue; text-align: center",
+           tags$b(href="https://dmine.io/climate-dashboards/", "Step 4: Model ")
+),
+
+checkboxGroupInput("climate", label = "Climate variables:", choices = c("Precipitation" = "pr", "Max Temp" = "tmmx", "Min Temp" = "tmmn", "Relative Min Humidity" = "rmin", "Relative Max Humidity" = "rmax", "Palmer Drought Index" = "pdsi", "100 Hr Burn Index" = "fm100", "1000 Hr Burn Index" = "fm1000", "Potential ET" = "pet"), inline= TRUE, selected=c("pr", "pdsi")),
+     selectInput("predictor", label = "Predictor Variable:", choice = c("Crop Loss ($)" = "loss", "Crop Claim Frequency" = "countratio"), selected = "loss"),
+
+uiOutput("damagecontrols"),
+
+selectInput("year3", label = "Year", choice = c("2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015"), selected="2004")
+
+
+),
+
+
+
+conditionalPanel(condition="input.conditionedPanels==2",
+ selectInput("endyear", label = "End Year", choice = c("2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015"), selected="2005")    
+
+), 
+
+width=2),
+
+
+
+    mainPanel(
+
+
+         #tags$style(type="text/css",
+         # ".shiny-output-error { visibility: hidden; }",
+         # ".shiny-output-error:before { visibility: hidden; }"),
+
+	      tabsetPanel(id = "conditionedPanels",
+
+
+		tabPanel("Step 1: Overview", value=3,
+                        tabPanelAbout1(),
+                        tabsetPanel(
+				tabPanelMethods1(),
+                                tabPanelMethods1a(),
+				tabPanelMethods1b(),
+				tabPanelMethods1c(),
+				#tabPanel("Agricultural Commodity Specifics", value=2,
+                                #     fluidRow(plotOutput("plot7xz"))),
+
+                                #tabPanel("Yearly Claims Distribution", value=2,
+                                #     fluidRow(plotOutput("plot7zz"))),
+
+
+                        id = "conditionedPanels")),
+
+
+
+		tabPanel("Step 2: Assembly", value=4,
+                        tabPanelAbout2(),
+                        tabsetPanel(
+				tabPanelMethods2(),
+                                tabPanel("USDA Commodity Insurance", value=2,
+                                     fluidRow(dataTableOutput("USDA"))),
+				
+				tabPanel("Soil Moisture Observations", value=2,
+                                     fluidRow(dataTableOutput("TAMU"))),
+
+				tabPanel("GHCND", value=2,
+                                     fluidRow(plotOutput("ghcnd"))),
+
+
+                                #tabPanel("Yearly Claims Distribution", value=2,
+                                #     fluidRow(plotOutput("plot7zz"))),
+
+
+                        id = "conditionedPanels")),
+
+
+ 		 tabPanel("Step 3: State level EDA", value =1, 
+                        tabPanelAbout3(),
+			tabsetPanel(
+				tabPanelMethods3(),
+				tabPanel("Crop Loss/County", value=1,
+                                     fluidRow(plotOutput("croploss1"),
+					plotOutput("croploss2"))),
+
+                                tabPanel("County Damage", value=5,
+
+                                     fluidRow(plotOutput("lossdamage1"),
+				     plotOutput("lossdamage2"))),
+
+				tabPanel("Claims Distribution", value=2,
+                                     fluidRow(plotOutput("plot7z"),
+				     plotOutput("plot7zz"))),
+
+                                #tabPanel("Yearly Claims Distribution", value=2,
+                                #     fluidRow(plotOutput("plot7zz"))),
+
+
+
+		id = "conditionedPanels")),
+
+
+
+
+
+		 tabPanel("Step 4: County Level EDA", value=1, 
+			tabPanelAbout4(),
+                        tabsetPanel(   
+				tabPanelMethods4(),
+                 		tabPanel("Monthly County Counts", value=2, 
+                                     fluidRow(plotOutput("plot7ddd"),
+					dataTableOutput("plot8gg"))),
+		 		#tabPanel("Yearly Claims Distribution", value=2,
+                                #     fluidRow(plotOutput("plot7zz"))),
+
+
+                  	id = "conditionedPanels")),
+
+	         tabPanel("Step 5: Algorithm", value=1,
+			tabPanelAbout5(),
+
+                        tabsetPanel(               
+			tabPanelMethods5(),
+
+                        id = "conditionedPanels")),
+
+		 tabPanel("Step 6: Model", value=6,
+                        tabPanelAbout6(),
+                        tabsetPanel(
+			tabPanelMethods6(),
+  			tabPanel("Pairwise Correlations", 
+                        fluidRow(plotOutput("plotregression"),
+			dataTableOutput("plotpairtable"))),
+
+                        id = "conditionedPanels")),
+
+		tabPanel("Step 7: Predict", value=2,tags$style(".main {background-color:[#99CCFF];}"),
+                        tabPanelAbout7(),
+                        tabsetPanel(
+			tabPanelMethods7(),
+
+                        id = "conditionedPanels"))
+
+
+
+
+)
+
+
+
+
+
+
+
+       
+    , width = 10) #main panel
+
+))
+)
